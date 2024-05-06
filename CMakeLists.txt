@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1)
+include(FetchContent)
 
 # Declare the project name
 project(sdl_template)
@@ -67,7 +68,18 @@ endif()
 # Configure SDL by calling its CMake file.
 # we use EXCLUDE_FROM_ALL so that its install targets and configs don't
 # pollute upwards into our configuration.
-add_subdirectory(SDL EXCLUDE_FROM_ALL)
+# add_subdirectory(SDL EXCLUDE_FROM_ALL)
+
+set(BUILD_SHARED_LIBS TRUE)
+FetchContent_Declare(
+        SDL3
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+        GIT_TAG main
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        OVERRIDE_FIND_PACKAGE # Force Raylib to find and use the SDL3 we just fetched
+)
+FetchContent_MakeAvailable(SDL3)
 
 # Link SDL to our executable. This also makes its include directory available to us.
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3)
