@@ -1,0 +1,13 @@
+{
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "cmake.debugConfig": {
+    "args": ["--verbose", "true"]
+  },
+  "editor.defaultFormatter": "xaver.clang-format",
+  "files.associations": {
+    "*.script": "lua",
+    "*.m": "c"
+  },
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "clangd.arguments": ["--compile-commands-dir=build/debug"]
+}
