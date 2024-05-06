@@ -9,5 +9,5 @@
     "*.m": "c"
   },
   "cmake.buildDirectory": "${workspaceFolder}/build",
-  "clangd.arguments": ["--compile-commands-dir=build/debug"]
+  "clangd.arguments": ["--compile-commands-dir=build"]
 }
