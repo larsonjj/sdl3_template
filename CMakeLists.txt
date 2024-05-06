@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.22.1)
 include(FetchContent)
 
 # Declare the project name
-project(sdl_template)
+project(sdl_template
+  VERSION 0.1.0
+  DESCRIPTION "SDL3 Template"
+  HOMEPAGE_URL "https://github.com/larsonjj/sdl_template"
+  LANGUAGES CXX
+)
 
 ####################################
 # PACKAGE INFO
@@ -10,11 +15,6 @@ project(sdl_template)
 
 # Set the name of the executable
 set(EXECUTABLE_NAME ${PROJECT_NAME})
-
-# Set Version
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 1)
-set(VERSION_PATCH 0)
 
 # Author
 set(AUTHOR_NAME "John Doe")
@@ -94,8 +94,8 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
     MACOSX_BUNDLE_GUI_IDENTIFIER ${BUNDLE_ID}
     MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
-    MACOSX_BUNDLE_BUNDLE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+    MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
     MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
     MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
     MACOSX_BUNDLE_ICON_FILE "logo.png"
