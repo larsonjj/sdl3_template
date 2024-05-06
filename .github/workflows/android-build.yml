@@ -16,10 +16,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Update the build.gradle
-        run:  |
-               cp build.gradle android-project/app/
-
       - name: Build the APK
         run: |
               cd android-project/
