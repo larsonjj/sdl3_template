@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.22.1)
 
 # Declare the project name
 project(sdl_template)
@@ -16,11 +16,12 @@ set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 
 # Author
-set(AUTHOR_NAME "Jake Larson")
-set(AUTHOR_EMAIL "jake.j.larson@gmail.com")
+set(AUTHOR_NAME "John Doe")
+set(AUTHOR_EMAIL "john.doen@example.com")
+set(AUTHOR_WEBSITE "https://example.com")
 
 # App Bundle info
-set(BUNDLE_ID "com.jakelarson.${EXECUTABLE_NAME}")
+set(BUNDLE_ID "com.example.${EXECUTABLE_NAME}")
 
 ####################################
 # GLOBAL CMAKE CONFIGURATION
@@ -84,7 +85,7 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
     MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
-    MACOSX_BUNDLE_INFO_STRING "https://jakelarson.com"
+    MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
     MACOSX_BUNDLE_ICON_FILE "logo.png"
 
     # in Xcode, create a Scheme in the schemes dropdown for the app.

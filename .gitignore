@@ -1,3 +1,25 @@
-.DS_Store
+# Builds
 build/
+
+# MacOS/iOS
+.DS_Store
+
+# Submodules
 SDL/
+
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
