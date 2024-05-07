@@ -30,6 +30,7 @@ jobs:
            mkdir _site
            mv build/web/sdl_template.html _site/index.html
            mv build/web/sdl_* _site/
+           cp -R build/web/assets _site/
       - name: Fix permissions
         run: |
          chmod -c -R +rX "_site/" | while read line; do

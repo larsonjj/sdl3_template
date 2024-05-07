@@ -61,12 +61,6 @@ if(APPLE)
   target_sources("${EXECUTABLE_NAME}" PRIVATE "src/logo.png")
 endif()
 
-if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
-  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
-  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-endif()
-
 # Configure SDL by calling its CMake file.
 # we use EXCLUDE_FROM_ALL so that its install targets and configs don't
 # pollute upwards into our configuration.
@@ -80,7 +74,7 @@ FetchContent_Declare(
   GIT_TAG main
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
-  OVERRIDE_FIND_PACKAGE # Force Raylib to find and use the SDL3 we just fetched
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(SDL3)
 
@@ -125,4 +119,12 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   )
 endif()
 install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
+
+if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
+	# set(CMAKE_EXECUTABLE_SUFFIX ".html" CACHE INTERNAL "")
+  set(CMAKE_EXECUTABLE_SUFFIX ".html")
+  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
+  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+endif()
 
