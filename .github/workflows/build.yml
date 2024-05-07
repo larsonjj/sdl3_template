@@ -51,12 +51,13 @@ jobs:
                 cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF ..
           - name: Build
             run: |
-                cmake --build . --config Release
-                rm -rf Release/sdl_template.app/Contents/MacOS/assets || true
-                cp -R ../assets Release/sdl_template.app/Contents/MacOS/assets
+                cmake --build build --config Release
+                rm -rf build/Release/sdl_template.app/Contents/MacOS/assets || true
+                cp -R ../assets build/Release/sdl_template.app/Contents/MacOS/assets
 
           - name: Create DMG
             run: | 
+                cd build
                 hdiutil create -size 2g -srcfolder release -volname sdl_template_apple_${{ matrix.target }} sdl_template_apple_${{ matrix.target }}.dmg
           - name: Upload Build
             uses: actions/upload-artifact@v4
