@@ -50,7 +50,7 @@ jobs:
                 mkdir build && cd build
                 cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF ..
           - name: Build
-            run: cmake --build build --config Release .
+            run: cmake --build build --config Release
 
           - name: Create DMG
             run: | 
