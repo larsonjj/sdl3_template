@@ -6,7 +6,7 @@ project(sdl_template
   VERSION 0.1.0
   DESCRIPTION "SDL3 Template"
   HOMEPAGE_URL "https://github.com/larsonjj/sdl_template"
-  LANGUAGES CXX
+  LANGUAGES C CXX
 )
 
 ####################################
