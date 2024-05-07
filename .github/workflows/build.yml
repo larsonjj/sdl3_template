@@ -44,16 +44,13 @@ jobs:
           - name: Setup Xcode version
             uses: maxim-lobanov/setup-xcode@v1.6.0
             with:
-                xcode-version: "15.3.0"
+                xcode-version: "15.2"
           - name: Configure
             run: | 
                 mkdir build && cd build
                 cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF ..
           - name: Build
-            run: |
-                cmake --build build --config Release
-                rm -rf build/Release/sdl_template.app/Contents/MacOS/assets || true
-                cp -R ../../assets build/Release/sdl_template.app/Contents/MacOS/assets
+            run: cmake --build build --target sdl_template --config Release .
 
           - name: Create DMG
             run: | 
@@ -63,4 +60,4 @@ jobs:
             uses: actions/upload-artifact@v4
             with: 
                 name: sdl_template-apple-${{ matrix.target }}
-                path: ./*.dmg
+                path: build/*.dmg
