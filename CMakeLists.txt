@@ -64,8 +64,7 @@ endif()
 if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
 	set(CMAKE_EXECUTABLE_SUFFIX ".html" CACHE INTERNAL "")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_SDL=2 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --preload-file assets/ --shell-file ./src/minshell.html")
-  set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
   set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
