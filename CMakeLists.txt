@@ -62,7 +62,6 @@ if(APPLE)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
-	set(CMAKE_EXECUTABLE_SUFFIX ".html" CACHE INTERNAL "")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
   set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
@@ -74,6 +73,7 @@ endif()
 # add_subdirectory(SDL EXCLUDE_FROM_ALL)
 
 set(BUILD_SHARED_LIBS TRUE)
+set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
   SDL3
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
