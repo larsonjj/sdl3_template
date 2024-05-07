@@ -19,15 +19,16 @@ jobs:
       - name: Build for web
         run: |
           source emsdk/emsdk_env.sh
-          mkdir build
-          cd build
-          emcmake cmake ..
+          mkdir -p build
+          mkdir -p build/web
+          cd build/web
+          emcmake cmake ../..
           cmake --build . --parallel
       - name: Prepare for upload
         run: |
            mkdir _site
-           mv build/sdl_template.html _site/index.html
-           mv build/sdl-* _site/
+           mv build/web/sdl_template.html _site/index.html
+           mv build/web/sdl_* _site/
       - name: Fix permissions
         run: |
          chmod -c -R +rX "_site/" | while read line; do
