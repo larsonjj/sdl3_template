@@ -58,11 +58,15 @@ PRIVATE
 # Referenced inside Info.plist.in
 
 if(APPLE)
-    target_sources("${EXECUTABLE_NAME}" PRIVATE "src/logo.png")
+  target_sources("${EXECUTABLE_NAME}" PRIVATE "src/logo.png")
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
 	set(CMAKE_EXECUTABLE_SUFFIX ".html" CACHE INTERNAL "")
+  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_SDL=2 -s ASSERTIONS=1 -s WASM=1 -Os -Wall -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --preload-file assets/ --shell-file ./src/minshell.html")
+  set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
+  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
 # Configure SDL by calling its CMake file.
@@ -72,12 +76,12 @@ endif()
 
 set(BUILD_SHARED_LIBS TRUE)
 FetchContent_Declare(
-        SDL3
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-        GIT_TAG main
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE # Force Raylib to find and use the SDL3 we just fetched
+  SDL3
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+  GIT_TAG main
+  GIT_SHALLOW TRUE
+  GIT_PROGRESS TRUE
+  OVERRIDE_FIND_PACKAGE # Force Raylib to find and use the SDL3 we just fetched
 )
 FetchContent_MakeAvailable(SDL3)
 
@@ -87,24 +91,24 @@ target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
 
 # set some extra configs for each platform
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-    # On macOS, make a proper .app bundle instead of a bare executable
-    MACOSX_BUNDLE TRUE
-    # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
-    # will not launch.
-    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
-    MACOSX_BUNDLE_GUI_IDENTIFIER ${BUNDLE_ID}
-    MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
-    MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
-    MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
-    MACOSX_BUNDLE_ICON_FILE "logo.png"
+  # On macOS, make a proper .app bundle instead of a bare executable
+  MACOSX_BUNDLE TRUE
+  # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
+  # will not launch.
+  MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
+  MACOSX_BUNDLE_GUI_IDENTIFIER ${BUNDLE_ID}
+  MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
+  MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
+  MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
+  MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
+  MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
+  MACOSX_BUNDLE_ICON_FILE "logo.png"
 
-    # in Xcode, create a Scheme in the schemes dropdown for the app.
-    XCODE_GENERATE_SCHEME TRUE
+  # in Xcode, create a Scheme in the schemes dropdown for the app.
+  XCODE_GENERATE_SCHEME TRUE
 
-    # Custom Attributes Identification for Info.plist
-    # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
+  # Custom Attributes Identification for Info.plist
+  # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
 )
 
 # on Visual Studio, set our app as the default project
@@ -113,13 +117,13 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "
 # On macOS Platforms, ensure that the bundle is valid for distribution by calling fixup_bundle.
 # note that fixup_bundle does not work on iOS, so you will want to use static libraries
 # or manually copy dylibs and set rpaths
-# if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-#     INSTALL(CODE
-#         "include(BundleUtilities)
-#         fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
-#         "
-#         COMPONENT Runtime
-#     )
-# endif()
-# install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  INSTALL(CODE
+    "include(BundleUtilities)
+    fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
+    "
+    COMPONENT Runtime
+  )
+endif()
+install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
 
