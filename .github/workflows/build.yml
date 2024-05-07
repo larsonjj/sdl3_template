@@ -52,8 +52,6 @@ jobs:
           - name: Build
             run: |
               cmake --build build --target install --config Release
-              rm -rf build/Release/sdl_template.app/Contents/MacOS/assets || true
-              cp -R ../assets build/Release/sdl_template.app/Contents/MacOS/assets
 
           - name: Create DMG
             run: | 
