@@ -113,20 +113,19 @@ if(APPLE)
 
     # Custom Attributes Identification for Info.plist
     # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
-
-    # On macOS Platforms, ensure that the bundle is valid for distribution by calling fixup_bundle.
-    # note that fixup_bundle does not work on iOS, so you will want to use static libraries
-    # or manually copy dylibs and set rpaths
-    if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  )
+  # On macOS Platforms, ensure that the bundle is valid for distribution by calling fixup_bundle.
+  # note that fixup_bundle does not work on iOS, so you will want to use static libraries
+  # or manually copy dylibs and set rpaths
+  if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
     INSTALL(CODE
       "include(BundleUtilities)
       fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
       "
       COMPONENT Runtime
     )
-    endif()
     install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
-  )
+  endif()
 else()
   target_sources(${EXECUTABLE_NAME} PRIVATE src/main.cpp)
 endif()
@@ -153,4 +152,3 @@ target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3)
 
 # Add the SDL_MAIN_USE_CALLBACKS define to the project
 target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
-
