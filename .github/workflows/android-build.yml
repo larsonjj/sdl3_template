@@ -16,9 +16,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Update the build.gradle
+        run:  |
+               cp build.gradle external/SDL/android-project/app/
+
       - name: Build the APK
         run: |
-              cd android-project/
+              cd external/SDL/android-project/
               ./gradlew assembleDebug
 
       - name: Upload the APK

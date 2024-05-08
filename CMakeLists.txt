@@ -54,18 +54,8 @@ set(EXECUTABLE_NAME ${PROJECT_NAME})
 # Configure SDL Cmake Options
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 
-# Download SDL
-FetchContent_Declare(
-  SDL3
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG main
-  GIT_SHALLOW TRUE
-  GIT_PROGRESS TRUE
-  EXCLUDE_FROM_ALL # Avoid polluting upwards into our configuration.
-)
-
-# Make SDL avaialble to our project
-FetchContent_MakeAvailable(SDL3)
+# Add SDL
+add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
 
 ####################################
 # Platform Specific Configuration
