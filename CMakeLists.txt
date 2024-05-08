@@ -109,8 +109,9 @@ if(APPLE)
   # or manually copy dylibs and set rpaths
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
     INSTALL(CODE
-      "include(BundleUtilities)
-      fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
+      "
+      include(BundleUtilities)
+      fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"${CMAKE_SOURCE_DIR}\")
       "
       COMPONENT Runtime
     )
