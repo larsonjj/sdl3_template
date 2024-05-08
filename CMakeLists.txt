@@ -128,6 +128,7 @@ if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
 endif()
 
 if (WIN32)
+  if(MSVC)
     # Enable console for debug builds and disable it for release builds
     set_target_properties(${EXECUTABLE_NAME}
     PROPERTIES
@@ -136,10 +137,10 @@ if (WIN32)
         LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
         LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
     )
-    if(MSVC)
-      # on Visual Studio, set our app as the default project
-      set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
-    endif()
+
+    # on Visual Studio, set our app as the default project
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
+  endif()
 endif()
 
 if (UNIX AND NOT APPLE)
