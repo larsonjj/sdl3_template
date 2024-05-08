@@ -24,7 +24,7 @@ jobs:
           - name: Upload Build
             uses: actions/upload-artifact@v4
             with: 
-                name: sdl_template-${{ matrix.target }}-${{ matrix.arch }}
+                name: sdl_template_${{ matrix.target }}_${{ matrix.arch }}
                 path: |
                     build/Release/*.exe
                     build/Release/*.dll
@@ -52,13 +52,15 @@ jobs:
           - name: Build
             run: |
               cmake --build build --target install --config Release
+              rm -rf build/Release/sdl_template.app/Contents/MacOS/assets || true
+              cp -R ../assets build/Release/sdl_template.app/Contents/MacOS/assets
 
           - name: Create DMG
             run: | 
                 cd build
-                hdiutil create -size 2g -srcfolder install -volname sdl_template_apple_${{ matrix.target }} sdl_template_apple_${{ matrix.target }}.dmg
+                hdiutil create -size 2g -srcfolder Release -volname sdl_template_apple_${{ matrix.target }} sdl_template_apple_${{ matrix.target }}.dmg
           - name: Upload Build
             uses: actions/upload-artifact@v4
             with: 
-                name: sdl_template-apple-${{ matrix.target }}
+                name: sdl_template_apple_${{ matrix.target }}
                 path: build/*.dmg

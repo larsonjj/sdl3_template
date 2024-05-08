@@ -32,7 +32,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
 # Enable/Disable shared libraries
-set(BUILD_SHARED_LIBS TRUE)
+set(BUILD_SHARED_LIBS FALSE)
 
 ####################################
 # Package info
@@ -117,30 +117,29 @@ if(APPLE)
   # On macOS Platforms, ensure that the bundle is valid for distribution by calling fixup_bundle.
   # note that fixup_bundle does not work on iOS, so you will want to use static libraries
   # or manually copy dylibs and set rpaths
-  if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    INSTALL(CODE
-      "include(BundleUtilities)
-      fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
-      "
-      COMPONENT Runtime
-    )
-    install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
-  endif()
+  # if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  #   INSTALL(CODE
+  #     "include(BundleUtilities)
+  #     fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
+  #     "
+  #     COMPONENT Runtime
+  #   )
+  #   install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
+  # endif()
 else()
   target_sources(${EXECUTABLE_NAME} PRIVATE src/main.cpp)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
+  set(CMAKE_EXECUTABLE_SUFFIX ".html")
+  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
+  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
 if(MSVC)
   # on Visual Studio, set our app as the default project
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
-endif()
-
-if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
-	# set(CMAKE_EXECUTABLE_SUFFIX ".html" CACHE INTERNAL "")
-  set(CMAKE_EXECUTABLE_SUFFIX ".html")
-  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
-  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
 ####################################
