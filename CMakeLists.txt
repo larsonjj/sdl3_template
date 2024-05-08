@@ -124,24 +124,24 @@ if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
-  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+  set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
 if (WIN32)
     # if config is debug set the variable to "/SUBSYSTEM:CONSOLE," else "/SUBSYSTEM:WINDOWS", append "/ENTRY:mainCRTStartup>" in any case
     set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<CONFIG:Debug>,/SUBSYSTEM:CONSOLE,/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup>")
-    target_link_options(TargetName PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
+    target_link_options(${EXECUTABLE_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
     if(MSVC)
       # on Visual Studio, set our app as the default project
       set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
     endif()
 endif()
 
-# if (UNIX AND NOT APPLE)
-#     # if config is not debug set the variable to "-mwindows" else nothing
-#     set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
-#     target_link_options(${PROJECT_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
-# endif()
+if (UNIX AND NOT APPLE)
+    # if config is not debug set the variable to "-mwindows" else nothing
+    set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
+    target_link_options(${EXECUTABLE_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
+endif()
 
 ####################################
 # Target Configuration
