@@ -137,11 +137,11 @@ if (WIN32)
     endif()
 endif()
 
-if (UNIX AND NOT APPLE)
-    # if config is not debug set the variable to "-mwindows" else nothing
-    set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
-    target_link_options(${PROJECT_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
-endif()
+# if (UNIX AND NOT APPLE)
+#     # if config is not debug set the variable to "-mwindows" else nothing
+#     set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
+#     target_link_options(${PROJECT_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
+# endif()
 
 ####################################
 # Target Configuration
