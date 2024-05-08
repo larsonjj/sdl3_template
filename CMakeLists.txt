@@ -128,7 +128,7 @@ if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
 endif()
 
 if (WIN32)
-    # if config is debug set the variable to "/SUBSYSTEM:CONSOLE," else "/SUBSYSTEM:WINDOWS", append "/ENTRY:mainCRTStartup>" in any case
+    # Enable console for debug builds and disable it for release builds
     set_target_properties(${EXECUTABLE_NAME}
     PROPERTIES
         LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
