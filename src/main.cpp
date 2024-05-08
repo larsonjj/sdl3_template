@@ -32,6 +32,10 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!renderer) {
         return SDL_Fail();
     }
+    SDL_RendererInfo rendererInfo;
+    SDL_GetRendererInfo(renderer, &rendererInfo);
+    SDL_Log("Renderer Name: %s", rendererInfo.name);
+    SDL_Log("Video Driver: %s", SDL_GetCurrentVideoDriver());
 
     // print some information about the window
     SDL_ShowWindow(window);
