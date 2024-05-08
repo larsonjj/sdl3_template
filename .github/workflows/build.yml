@@ -51,7 +51,7 @@ jobs:
                 cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF ..
           - name: Build
             run: |
-              cmake --build build --target install --config Release
+              cmake --build build --target install --config Debug
               rm -rf build/install/sdl-template.app/Contents/MacOS/assets || true
               cp -R ./assets build/install/sdl-template.app/Contents/MacOS/assets
 
