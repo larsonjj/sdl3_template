@@ -32,7 +32,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
 # Enable/Disable shared libraries
-set(BUILD_SHARED_LIBS FALSE)
+set(BUILD_SHARED_LIBS ON)
 
 ####################################
 # Package info
