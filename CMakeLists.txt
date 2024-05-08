@@ -130,13 +130,17 @@ endif()
 if (WIN32)
     # if config is debug set the variable to "/SUBSYSTEM:CONSOLE," else "/SUBSYSTEM:WINDOWS", append "/ENTRY:mainCRTStartup>" in any case
     set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<CONFIG:Debug>,/SUBSYSTEM:CONSOLE,/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup>")
+    target_link_options(TargetName PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
     if(MSVC)
       # on Visual Studio, set our app as the default project
       set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
     endif()
-else()
+endif()
+
+if (UNIX AND NOT APPLE)
     # if config is not debug set the variable to "-mwindows" else nothing
     set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
+    target_link_options(TargetName PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
 endif()
 
 ####################################
