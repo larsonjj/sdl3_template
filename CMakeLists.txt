@@ -67,7 +67,11 @@ if (ANDROID)
 	set(EXECUTABLE_NAME main)
 	add_library(${EXECUTABLE_NAME} SHARED)
 else()
-	add_executable(${EXECUTABLE_NAME})
+  if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
+  else()
+    add_executable(${EXECUTABLE_NAME})
+  endif()
 endif()
 
 if(APPLE)
@@ -86,7 +90,7 @@ if(APPLE)
   # set some extra configs for each platform
   set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     # On macOS, make a proper .app bundle instead of a bare executable
-    MACOSX_BUNDLE TRUE
+    BUNDLE True
     # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
     # will not launch.
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
