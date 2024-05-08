@@ -23,10 +23,10 @@ jobs:
       - name: Build the APK
         run: |
               cd external/SDL/android-project/
-              ./gradlew assembleDebug
+              ./gradlew assembleRelease
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
         with: 
           name: app-debug.apk
-          path: external/SDL/android-project/app/build/outputs/apk/debug/app_debug.apk
+          path: external/SDL/android-project/app/build/outputs/apk/debug/app-release.apk
