@@ -115,7 +115,7 @@ if(APPLE)
       "
       COMPONENT Runtime
     )
-    install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
+    install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION install)
   endif()
 else()
   target_sources(${EXECUTABLE_NAME} PRIVATE src/main.cpp)
