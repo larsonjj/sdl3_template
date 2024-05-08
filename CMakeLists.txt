@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.22.1)
 include(FetchContent)
 
 # Declare the project name, version, description, and languages used.
-project(sdl_template
+project(sdl-template
   VERSION 0.1.0
   DESCRIPTION "SDL3 Template"
   HOMEPAGE_URL "https://github.com/larsonjj/sdl_template"
@@ -38,14 +38,14 @@ set(BUILD_SHARED_LIBS ON)
 # Package info
 ####################################
 
+# Set the name of the executable
+set(EXECUTABLE_NAME ${PROJECT_NAME})
+
 # Author Information for bundling
 set(AUTHOR_NAME "John Doe")
 set(AUTHOR_EMAIL "john.doen@example.com")
 set(AUTHOR_WEBSITE "https://example.com")
 set(AUTHOR_BUNDLE_ID "com.example.${EXECUTABLE_NAME}")
-
-# Set the name of the executable
-set(EXECUTABLE_NAME ${PROJECT_NAME})
 
 ####################################
 # Load Dependencies
@@ -90,7 +90,6 @@ if(APPLE)
     # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
     # will not launch.
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
-    MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
     MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
     MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"

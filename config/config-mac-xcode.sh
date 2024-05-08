@@ -10,5 +10,5 @@ cmake -G "Xcode" cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=N
 cmake --build . --target install --config Release --parallel
 
 # Ensure asset folder is copied
-rm -rf install/sdl_template.app/Contents/MacOS/assets || true
-cp -R ../../assets install/sdl_template.app/Contents/MacOS/assets
+rm -rf install/sdl-template.app/Contents/MacOS/assets || true
+cp -R ../../assets install/sdl-template.app/Contents/MacOS/assets

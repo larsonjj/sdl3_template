@@ -28,7 +28,7 @@ jobs:
       - name: Prepare for upload
         run: |
            mkdir _site
-           mv build/web/sdl_template.html _site/index.html
+           mv build/web/sdl-template.html _site/index.html
            mv build/web/sdl_* _site/
            cp -R build/web/assets _site/
       - name: Fix permissions
