@@ -63,4 +63,4 @@ jobs:
             uses: actions/upload-artifact@v4
             with: 
                 name: sdl-template-apple-${{ matrix.target }}
-                path: build/install/*.app
+                path: build/*.dmg
