@@ -43,7 +43,7 @@ set(EXECUTABLE_NAME ${PROJECT_NAME})
 
 # Author Information for bundling
 set(AUTHOR_NAME "John Doe")
-set(AUTHOR_EMAIL "john.doen@example.com")
+set(AUTHOR_EMAIL "john.doe@example.com")
 set(AUTHOR_WEBSITE "https://example.com")
 set(AUTHOR_BUNDLE_ID "com.example.${EXECUTABLE_NAME}")
 
@@ -108,12 +108,12 @@ if(APPLE)
   # note that fixup_bundle does not work on iOS, so you will want to use static libraries
   # or manually copy dylibs and set rpaths
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    # INSTALL(CODE
-    #   "include(BundleUtilities)
-    #   fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
-    #   "
-    #   COMPONENT Runtime
-    # )
+    INSTALL(CODE
+      "include(BundleUtilities)
+      fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
+      "
+      COMPONENT Runtime
+    )
     install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
   endif()
 else()
