@@ -29,7 +29,7 @@ jobs:
         run: |
            mkdir _site
            mv build/web/sdl-template.html _site/index.html
-           mv build/web/sdl_* _site/
+           mv build/web/sdl-* _site/
            cp -R build/web/assets _site/
       - name: Fix permissions
         run: |
