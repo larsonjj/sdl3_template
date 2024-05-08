@@ -108,15 +108,15 @@ if(APPLE)
   # On macOS Platforms, ensure that the bundle is valid for distribution by calling fixup_bundle.
   # note that fixup_bundle does not work on iOS, so you will want to use static libraries
   # or manually copy dylibs and set rpaths
-  if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    INSTALL(CODE
-      "include(BundleUtilities)
-      fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
-      "
-      COMPONENT Runtime
-    )
-    install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
-  endif()
+  # if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  #   INSTALL(CODE
+  #     "include(BundleUtilities)
+  #     fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"\")
+  #     "
+  #     COMPONENT Runtime
+  #   )
+  #   install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION ./install)
+  # endif()
 else()
   target_sources(${EXECUTABLE_NAME} PRIVATE src/main.cpp)
 endif()
