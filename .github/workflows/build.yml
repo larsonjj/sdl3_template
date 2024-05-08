@@ -55,12 +55,13 @@ jobs:
               rm -rf build/Release/sdl_template.app/Contents/MacOS/assets || true
               cp -R ./assets build/Release/sdl_template.app/Contents/MacOS/assets
 
-          - name: Create DMG
-            run: | 
-                cd build
-                hdiutil create -size 2g -srcfolder Release -volname sdl_template_apple_${{ matrix.target }} sdl_template_apple_${{ matrix.target }}.dmg
+          # - name: Create DMG
+          #   run: | 
+          #       cd build
+          #       hdiutil create -size 2g -srcfolder Release -volname sdl_template_apple_${{ matrix.target }} sdl_template_apple_${{ matrix.target }}.dmg
           - name: Upload Build
             uses: actions/upload-artifact@v4
             with: 
                 name: sdl_template_apple_${{ matrix.target }}
-                path: build/*.dmg
+                path: build/Release/*.app
+                # path: build/*.dmg
