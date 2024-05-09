@@ -53,6 +53,9 @@ jobs:
                 cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../.. -B ./build
           - name: Build
             run: |
+              ls -al
+              cd ./build
+              ls -al
               cmake --build ./build --target install --config Release
           # - name: Build
           #   run: |
