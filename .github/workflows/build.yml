@@ -49,15 +49,19 @@ jobs:
             run: | 
                 mkdir -p build 
                 mkdir -p build/mac
+                echo "%%%%%%%%% 1 %%%%%%%%%%"
                 cd build/mac
                 pwd
-                echo "%%%%%%%%% 1 %%%%%%%%%%"
+                ls
+                echo "%%%%%%%%% /1 %%%%%%%%%%"
                 cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../.. -B ./build
           - name: Build
             run: |
-              pwd
               echo "%%%%%%%%% 2 %%%%%%%%%%"
               cd build/mac
+              pwd
+              ls
+              echo "%%%%%%%%% /2 %%%%%%%%%%"
               cmake --build ./build --target install --config Release
           # - name: Build
           #   run: |
@@ -71,10 +75,11 @@ jobs:
           #       hdiutil create -size 2g -srcfolder install -volname sdl-template-apple-${{ matrix.target }} sdl-template-apple-${{ matrix.target }}.dmg
           - name: Create DMG
             run: |
+                echo "%%%%%%%%% 3 %%%%%%%%%%"
                 cd build/mac
                 pwd
                 ls
-                echo "%%%%%%%%% 3 %%%%%%%%%%"
+                echo "%%%%%%%%% /3 %%%%%%%%%%"
                 cpack -G DragNDrop -C Release
           - name: Upload Build
             uses: actions/upload-artifact@v4
