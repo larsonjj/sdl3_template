@@ -61,7 +61,6 @@ jobs:
           #       hdiutil create -size 2g -srcfolder install -volname sdl-template-apple-${{ matrix.target }} sdl-template-apple-${{ matrix.target }}.dmg
           - name: Create DMG
             run: | 
-                cd build
                 cpack -G DragNDrop -C Release
           - name: Upload Build
             uses: actions/upload-artifact@v4
