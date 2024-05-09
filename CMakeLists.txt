@@ -83,7 +83,7 @@ endif()
 
 if(APPLE)
   # Add Logo
-  target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
+  # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
 
   # NOTE: ios_launch_screen.storyboard is required for Apple's mobile platforms
   # It describes what to show the user while the application is starting up
@@ -107,7 +107,7 @@ if(APPLE)
     MACOSX_BUNDLE_LONG_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
     MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
     MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
-    MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
+    # MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
 
     # in Xcode, create a Scheme in the schemes dropdown for the app.
     XCODE_GENERATE_SCHEME TRUE
