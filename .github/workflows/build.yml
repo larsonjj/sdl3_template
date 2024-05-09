@@ -53,7 +53,7 @@ jobs:
             run: |
               cmake --build . --target install --config Debug
               rm -rf ./sdl-template.app/Contents/MacOS/assets || true
-              cp -R ./assets ./sdl-template.app/Contents/MacOS/assets
+              cp -R ../assets ./sdl-template.app/Contents/MacOS/assets
 
           # - name: Create DMG
           #   run: | 
