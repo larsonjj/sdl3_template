@@ -35,7 +35,7 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-              target: ['ARM64']
+              target: ['Darwin']
 
         steps:
           - uses: actions/checkout@v4
