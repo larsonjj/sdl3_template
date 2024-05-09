@@ -35,7 +35,7 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-              target: ['Darwin']
+              target: ['ARM64']
 
         steps:
           - uses: actions/checkout@v4
@@ -52,13 +52,17 @@ jobs:
           - name: Build
             run: |
               cmake --build build --target install --config Debug
-              rm -rf build/install/sdl-template.app/Contents/MacOS/assets || true
-              cp -R ./assets build/install/sdl-template.app/Contents/MacOS/assets
+              rm -rf build/sdl-template.app/Contents/MacOS/assets || true
+              cp -R ./assets build/sdl-template.app/Contents/MacOS/assets
 
+          # - name: Create DMG
+          #   run: | 
+          #       cd build
+          #       hdiutil create -size 2g -srcfolder install -volname sdl-template-apple-${{ matrix.target }} sdl-template-apple-${{ matrix.target }}.dmg
           - name: Create DMG
             run: | 
                 cd build
-                hdiutil create -size 2g -srcfolder install -volname sdl-template-apple-${{ matrix.target }} sdl-template-apple-${{ matrix.target }}.dmg
+                cpack -G DragNDrop -C Release
           - name: Upload Build
             uses: actions/upload-artifact@v4
             with: 

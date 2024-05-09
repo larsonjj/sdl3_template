@@ -34,6 +34,13 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 # Enable/Disable shared libraries
 set(BUILD_SHARED_LIBS ON)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+# Define PROJECT_INCLUDE to be the path to the include directory of the project
+set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/src")
+
+# Define PROJECT_SOURCES as a list of all source files
+file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
+
 ####################################
 # Package info
 ####################################
@@ -83,7 +90,7 @@ if(APPLE)
   # Referenced inside Info.plist.in
   target_sources(${EXECUTABLE_NAME}
   PRIVATE
-      src/main.cpp
+      ${PROJECT_SOURCES}
       src/ios_launch_screen.storyboard
   )
 
@@ -112,17 +119,34 @@ if(APPLE)
   # note that fixup_bundle does not work on iOS, so you will want to use static libraries
   # or manually copy dylibs and set rpaths
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    INSTALL(CODE
-      "
-      include(BundleUtilities)
-      fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"${CMAKE_SOURCE_DIR}\")
-      "
-      COMPONENT Runtime
-    )
-    install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION install)
+  #   INSTALL(CODE
+  #     "
+  #     include(BundleUtilities)
+  #     fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"${PROJECT_SOURCES}\")
+  #     "
+  #     COMPONENT Runtime
+  #   )
+  #   install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION install)
+
+    install(TARGETS ${EXECUTABLE_NAME}
+        BUNDLE DESTINATION . COMPONENT Runtime
+        RUNTIME DESTINATION bin COMPONENT Runtime)
+
+    # Note Mac specific extension .app
+    set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
+
+    # Directories to look for dependencies
+    set(DIRS ${CMAKE_BINARY_DIR})
+
+    install(CODE "include(BundleUtilities)
+    fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
+
+    set(CPACK_GENERATOR "DRAGNDROP")
+    include(CPack)
+
   endif()
 else()
-  target_sources(${EXECUTABLE_NAME} PRIVATE src/main.cpp)
+  target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
