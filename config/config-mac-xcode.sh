@@ -6,10 +6,10 @@ mkdir -p build
 mkdir -p build/mac
 
 cd build/mac
-cmake -G "Xcode" cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=Darwin -DSDL_STATIC=ON -DSDL_SHARED=OFF ../..
-cmake --build . --target install --config Release --parallel
+cmake -G "Xcode" -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=Darwin -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../.. -B ./build
+cmake --build ./build --target install --config Release --parallel
 cpack -G DragNDrop -C Release
 
 # Ensure asset folder is copied
-rm -rf ./sdl-template.app/Contents/MacOS/assets || true
-cp -R ../../assets ./sdl-template.app/Contents/MacOS/assets
+# rm -rf .build/sdl-template.app/Contents/MacOS/assets || true
+# cp -R ../../assets ./build/sdl-template.app/Contents/MacOS/assets
