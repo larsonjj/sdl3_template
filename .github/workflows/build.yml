@@ -88,4 +88,4 @@ jobs:
             with: 
                 name: sdl-template-apple-${{ matrix.target }}
                 path: |
-                  .build/mac/*.dmg
+                  ./build/mac/*.dmg
