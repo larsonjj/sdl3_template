@@ -54,7 +54,7 @@ jobs:
                 pwd
                 ls
                 echo "%%%%%%%%% /1 %%%%%%%%%%"
-                cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../.. -B ./build
+                cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../..
           - name: Build
             run: |
               echo "%%%%%%%%% 2 %%%%%%%%%%"
@@ -62,7 +62,7 @@ jobs:
               pwd
               ls
               echo "%%%%%%%%% /2 %%%%%%%%%%"
-              cmake --build ./build --target install --config Release
+              cmake --build ./ --target install --config Release
           # - name: Build
           #   run: |
           #     cmake --build . --target install --config Release
