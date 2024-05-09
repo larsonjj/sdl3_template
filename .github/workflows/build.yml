@@ -55,8 +55,8 @@ jobs:
           - name: Build
             run: |
               pwd
-              ls
-              cd build
+              echo "%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+              cd build/mac
               ls
               cmake --build ./build --target install --config Release
           # - name: Build
