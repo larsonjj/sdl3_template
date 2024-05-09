@@ -129,14 +129,15 @@ if(APPLE)
   #   install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION install)
 
     install(TARGETS ${EXECUTABLE_NAME}
-        BUNDLE DESTINATION . COMPONENT Runtime
-        RUNTIME DESTINATION bin COMPONENT Runtime)
+        BUNDLE DESTINATION install COMPONENT Runtime
+        RUNTIME DESTINATION install/bin COMPONENT Runtime)
 
     # Note Mac specific extension .app
-    set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
+    set(APP "\${CMAKE_INSTALL_PREFIX}/install/${EXECUTABLE_NAME}.app")
 
     # Directories to look for dependencies
     set(DIRS ${CMAKE_BINARY_DIR})
+    message(STATUS "DIRS: ${DIRS}")
 
     install(CODE "include(BundleUtilities)
     fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
