@@ -86,8 +86,6 @@ jobs:
               mkdir build && cd build
               cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -S ..
               cmake --build . --target sdl-template --config Release
-              pwd
-              echo "%%%%%%%%%%%%%%%%%%%%"
               cpack -G TGZ -C Release
         - name: Upload Tar GZ Package
           uses: actions/upload-artifact@v4
