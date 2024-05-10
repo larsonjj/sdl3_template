@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
     build-win:
-        name: Build for Windows
+        name: Windows Build (x64, ARM64)
         runs-on: windows-latest
         strategy:
           fail-fast: false
@@ -30,7 +30,7 @@ jobs:
                     build/Release/*.dll
 
     build-mac:
-        name: Build for Apple
+        name: MacOS Build
         runs-on: macos-14
         strategy:
           fail-fast: false
@@ -65,3 +65,90 @@ jobs:
                 name: sdl-template-apple-${{ matrix.target }}
                 path: |
                   ./build/mac/*.dmg
+    android:
+      name: Android Apk Build
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            submodules: true
+        - uses: actions/setup-java@v4
+          with:
+            distribution: 'temurin'
+            java-version: '17'
+
+        - name: Update the build.gradle
+          run:  |
+                cp build.gradle external/SDL/android-project/app/
+
+        - name: Build the APK
+          run: |
+                cd external/SDL/android-project/
+                ./gradlew assembleDebug
+
+        - name: Upload the APK
+          uses: actions/upload-artifact@v4
+          with: 
+            name: app-debug.apk
+            path: external/SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
+    build-web:
+      name: Web Build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            submodules: true
+        - name: Get Emscripten
+          run: |
+            git clone https://github.com/emscripten-core/emsdk.git --depth=1
+            cd emsdk
+            ./emsdk install tot
+            ./emsdk activate tot
+        - name: Build for web
+          run: |
+            source emsdk/emsdk_env.sh
+            mkdir -p build
+            mkdir -p build/web
+            cp -R assets build/web/assets
+            cd build/web
+            emcmake cmake ../..
+            cmake --build . --parallel
+        - name: Prepare for upload
+          run: |
+            mkdir _site
+            mv build/web/sdl-template.html _site/index.html
+            mv build/web/sdl-* _site/
+            cp -R build/web/assets _site/
+        - name: Fix permissions
+          run: |
+            chmod -c -R +rX "_site/" | while read line; do
+            echo "::warning title=Invalid file permissions automatically fixed::$line"
+            done
+        - name: Upload 
+          uses: actions/upload-pages-artifact@v3
+          
+    # Deploy Web to GitHub Pages
+    deploy:
+      # Add a dependency to the build job
+      needs: build-web
+
+      # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+      permissions:
+        pages: write      # to deploy to Pages
+        id-token: write   # to verify the deployment originates from an appropriate source
+
+      # Deploy to the github-pages environment
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+
+      # Specify runner + deployment step
+      runs-on: ubuntu-latest
+      steps:
+        - name: Setup Pages
+          uses: actions/configure-pages@v5
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4 # or the latest "vX.X.X" version tag for this action
