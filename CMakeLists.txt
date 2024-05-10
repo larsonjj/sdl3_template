@@ -199,7 +199,7 @@ if(UNIX AND NOT APPLE)
   # target_link_options(${EXECUTABLE_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
 
   # Set CPack variables for generating .deb and .rpm packages
-  set(CPACK_GENERATOR "DEB;RPM")
+  set(CPACK_GENERATOR "TGZ")
   set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME}) # replace with your name
   set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${APP_DESCRIPTION}) # replace with your application description
   set(CPACK_PACKAGE_VERSION ${CMAKE_PROJECT_VERSION}) # replace with your application version
