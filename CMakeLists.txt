@@ -53,6 +53,7 @@ set(AUTHOR_NAME "John Doe")
 set(AUTHOR_EMAIL "john.doe@example.com")
 set(AUTHOR_WEBSITE "https://example.com")
 set(AUTHOR_BUNDLE_ID "com.example.${EXECUTABLE_NAME}")
+set(APP_DESCRIPTION "SDL template application")
 
 
 ####################################
@@ -192,10 +193,17 @@ if (WIN32)
   endif()
 endif()
 
-if (UNIX AND NOT APPLE)
-    # if config is not debug set the variable to "-mwindows" else nothing
-    set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
-    target_link_options(${EXECUTABLE_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
+if(UNIX AND NOT APPLE)
+  # if config is not debug set the variable to "-mwindows" else nothing
+  set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
+  target_link_options(${EXECUTABLE_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
+
+  # Set CPack variables for generating .deb and .rpm packages
+  set(CPACK_GENERATOR "DEB;RPM")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME}) # replace with your name
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${APP_DESCRIPTION}) # replace with your application description
+  set(CPACK_PACKAGE_VERSION ${CMAKE_PROJECT_VERSION}) # replace with your application version
+  include(CPack)
 endif()
 
 ####################################
