@@ -80,7 +80,7 @@ jobs:
         - name: Setup CMake
           uses: jwlawson/actions-setup-cmake@v1.9
         - name: Setup Ninja
-          uses: ashutoshvarma/setup-ninja@v2
+          uses: ashutoshvarma/setup-ninja@master
         - name: Build DEB Package
           run: |
               mkdir build && cd build
@@ -108,7 +108,7 @@ jobs:
         - name: Setup CMake
           uses: jwlawson/actions-setup-cmake@v1.9
         - name: Setup Ninja
-          uses: ashutoshvarma/setup-ninja@v2
+          uses: ashutoshvarma/setup-ninja@master
         - name: Build RPM Package
           run: |
               mkdir build && cd build
