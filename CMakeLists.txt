@@ -8,6 +8,12 @@ cmake_minimum_required(VERSION 3.22.1)
 # Include FetchContent module to download dependencies
 include(FetchContent)
 
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  # Build universal binaries on Apple Silicon
+  ## NOTE: This must be set before the project() call
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
+endif()
+
 # Declare the project name, version, description, and languages used.
 project(sdl-template
   VERSION 0.1.0

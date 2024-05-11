@@ -35,7 +35,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: ["x86_64", "arm64"]
         target: ["Darwin"]
 
     steps:
@@ -51,7 +50,7 @@ jobs:
           mkdir -p build 
           mkdir -p build/mac
           cd build/mac
-          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../..
+          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../..
       - name: Build
         run: |
           cd build/mac
