@@ -9,5 +9,8 @@
     "*.m": "c"
   },
   "cmake.buildDirectory": "${workspaceFolder}/build",
-  "clangd.arguments": ["--compile-commands-dir=build"]
+  "clangd.arguments": ["--compile-commands-dir=build"],
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
