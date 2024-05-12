@@ -145,7 +145,7 @@ jobs:
 
       - name: Update the build.gradle
         run: |
-          cp build.gradle external/SDL/android-project/app/
+          cp src/build.gradle external/SDL/android-project/app/
 
       - name: Build the APK
         run: |
