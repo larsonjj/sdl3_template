@@ -43,7 +43,7 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v1.9
       - name: Setup Ninja
-        uses: ashutoshvarma/setup-ninja@v2
+        uses: ashutoshvarma/setup-ninja@v1.1
       - name: Build and Package
         run: |
           mkdir build && cd build
