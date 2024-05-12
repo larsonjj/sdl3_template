@@ -183,8 +183,8 @@ else()
       COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets"
         "${CMAKE_ANDROID_ASSETS_DIRECTORIES}/assets"
+    )
     message(STATUS "Copying assets to ${CMAKE_ANDROID_ASSETS_DIRECTORIES}/assets")
-)
   else()
     add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
