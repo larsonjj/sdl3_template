@@ -82,7 +82,7 @@ jobs:
           mkdir -p build 
           mkdir -p build/ios
           cd build/ios
-          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DDCMAKE_OSX_SYSROOT=iphoneos -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../..
+          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../..
       - name: Build
         run: |
           cd build/ios
