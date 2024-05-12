@@ -28,6 +28,33 @@ jobs:
           path: |
             build/Release/*.exe
             build/Release/*.dll
+  build-ubuntu:
+    name: Ubuntu Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ["Linux"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1.9
+      - name: Setup Ninja
+        uses: ashutoshvarma/setup-ninja@v2
+      - name: Build and Package
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" ..
+          cmake --build . --target sdl-template --config Release
+          tar -czvf sdl-template.tar.gz sdl-template
+      - name: Upload Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdl-template-ubuntu-package
+          path: build/*.tar.gz
 
   build-mac:
     name: MacOS Build
