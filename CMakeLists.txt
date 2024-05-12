@@ -95,12 +95,14 @@ add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
 # Platform Specific Configuration
 ####################################
 
-# Create an executable or a shared library based on the platform and add our sources to it
+### Android ###
 if (ANDROID)
-	# The SDL java code is hardcoded to load libmain.so on android, so we need to change EXECUTABLE_NAME
+	# SDL java JNI interface code is hardcoded to load libmain.so on android
+  # EXECUTABLE_NAME must be set to "main" for android
 	set(EXECUTABLE_NAME main)
 	add_library(${EXECUTABLE_NAME} SHARED)
 else()
+  ### MacOS ###
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
     add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
   else()
@@ -108,6 +110,7 @@ else()
   endif()
 endif()
 
+### MacOS/iOS ###
 if(APPLE)
   # Add Logo
   # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
@@ -121,7 +124,7 @@ if(APPLE)
       src/ios_launch_screen.storyboard
   )
 
-  # set some extra configs for each platform
+  # CPack Bundler Configuration
   set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     # On macOS, make a proper .app bundle instead of a bare executable
     BUNDLE True
@@ -143,9 +146,8 @@ if(APPLE)
     # Custom Attributes Identification for Info.plist
     # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
   )
-  # On macOS Platforms, ensure that the bundle is valid for distribution by calling fixup_bundle.
-  # note that fixup_bundle does not work on iOS, so you will want to use static libraries
-  # or manually copy dylibs and set rpaths
+
+  ### MacOS ###
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
     install(TARGETS ${EXECUTABLE_NAME}
         BUNDLE DESTINATION . COMPONENT Runtime
@@ -168,6 +170,7 @@ else()
   target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
 endif()
 
+### Emscripten/Web ###
 if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
@@ -175,7 +178,9 @@ if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
   set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
+### Windows ###
 if (WIN32)
+  ### Visual C++ Compiler ###
   if(MSVC)
     # Enable console for debug builds and disable it for release builds
     set_target_properties(${EXECUTABLE_NAME}
@@ -186,7 +191,7 @@ if (WIN32)
         LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
     )
 
-    # on Visual Studio, set our app as the default project
+    # Set this application as the default project
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
   endif()
 endif()
@@ -195,8 +200,8 @@ endif()
 # Target Configuration
 ####################################
 
-# Link all of our dependencies
+# Link dependencies
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3)
 
-# Add the SDL_MAIN_USE_CALLBACKS define to the project
+# Add the SDL_MAIN_USE_CALLBACKS define to the project for simpler implementation
 target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
