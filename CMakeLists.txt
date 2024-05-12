@@ -179,7 +179,7 @@ else()
   target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
 
   if (ANDROID)
-    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+    add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets"
         "${CMAKE_ANDROID_ASSETS_DIRECTORIES}/assets"
