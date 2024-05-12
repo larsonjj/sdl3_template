@@ -176,7 +176,6 @@ jobs:
           source emsdk/emsdk_env.sh
           mkdir -p build
           mkdir -p build/web
-          cp -R assets build/web/assets
           cd build/web
           emcmake cmake ../..
           cmake --build . --parallel
