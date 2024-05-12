@@ -65,6 +65,55 @@ jobs:
           name: sdl-template-apple-${{ matrix.target }}
           path: |
             ./build/mac/*.dmg
+  build-ios:
+    name: iOS Build
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ["iOS"]
+        arch: ["armv7s", "arm64"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: "15.3"
+      - name: Configure
+        run: |
+          mkdir -p build 
+          mkdir -p build/ios
+          cd build/ios
+          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -DDCMAKE_OSX_SYSROOT=iphoneos -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../..
+      - name: Build
+        run: |
+          cd build/ios
+          cmake --build ./ --target install --config Release
+  build-ios-simulator:
+    name: iOS Simulator Build
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: "15.3"
+      - name: Configure
+        run: |
+          mkdir -p build 
+          mkdir -p build/ios
+          cd build/ios
+          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOSSimulator -DCMAKE_OSX_ARCHITECTURES=x86_64 -DDCMAKE_OSX_SYSROOT=iphonesimulator -DSDL_STATIC=ON -DSDL_SHARED=OFF -S ../..
+      - name: Build
+        run: |
+          cd build/ios
+          cmake --build ./ --target install --config Release
   android:
     name: Android Apk Build
     runs-on: ubuntu-latest
