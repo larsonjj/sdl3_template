@@ -43,17 +43,12 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
       - name: Setup Ninja
-        uses: ashutoshvarma/setup-ninja@v1.1
+        uses: seanmiddleditch/gha-setup-ninja@v4
       - name: Build and Package
         run: |
           mkdir build && cd build
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" ..
           cmake --build ./ --target sdl-template --config Release
-      - name: Upload Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: sdl-template-ubuntu-${{ matrix.target }}
-          path: build/*.tar.gz
 
   build-mac:
     name: MacOS Build
