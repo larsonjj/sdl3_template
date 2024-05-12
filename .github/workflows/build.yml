@@ -86,7 +86,7 @@ jobs:
       - name: Build
         run: |
           cd build/ios
-          cmake --build ./ --target install --config Release
+          cmake --build ./ --target sdl-template --config Release
   build-ios-simulator:
     name: iOS Simulator Build
     runs-on: macos-14
@@ -108,7 +108,7 @@ jobs:
       - name: Build
         run: |
           cd build/ios
-          cmake --build ./ --target install --config Release
+          cmake --build ./ --target sdl-template --config Release
   android:
     name: Android Apk Build
     runs-on: ubuntu-latest
