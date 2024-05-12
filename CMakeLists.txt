@@ -178,11 +178,13 @@ if(APPLE)
 else()
   target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
 
-  add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
-    )
+  if (NOT ANDROID)
+    add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+          "${CMAKE_SOURCE_DIR}/assets"
+          "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+      )
+  endif()
 endif()
 
 ### Emscripten/Web ###
