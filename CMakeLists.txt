@@ -191,31 +191,6 @@ if (WIN32)
   endif()
 endif()
 
-if(UNIX AND NOT APPLE)
-  install(TARGETS ${EXECUTABLE_NAME}
-  BUNDLE DESTINATION . COMPONENT Runtime
-  RUNTIME DESTINATION bin COMPONENT Runtime)
-
-  # Note Mac specific extension .app
-  # set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
-
-  # Directories to look for dependencies
-  # set(DIRS ${CMAKE_BINARY_DIR})
-
-  # install(CODE "include(BundleUtilities)
-  # fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
-
-  # set(CPACK_GENERATOR "DRAGNDROP")
-  # include(CPack)
-
-  # Set CPack variables for generating .deb and .rpm packages
-  set(CPACK_GENERATOR "TGZ")
-  set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME}) # replace with your name
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${APP_DESCRIPTION}) # replace with your application description
-  set(CPACK_PACKAGE_VERSION ${CMAKE_PROJECT_VERSION}) # replace with your application version
-  include(CPack)
-endif()
-
 ####################################
 # Target Configuration
 ####################################
