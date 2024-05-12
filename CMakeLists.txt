@@ -54,6 +54,9 @@ file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/s
 # Set the name of the executable
 set(EXECUTABLE_NAME ${PROJECT_NAME})
 
+# Set assets path
+set(SRC_ASSETS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+
 # Author Information for bundling
 set(AUTHOR_NAME "John Doe")
 set(AUTHOR_EMAIL "john.doe@example.com")
@@ -215,5 +218,16 @@ endif()
 # Link dependencies
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3)
 
-# Add the SDL_MAIN_USE_CALLBACKS define to the project for simpler implementation
-target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
+
+    # Set the asset path macro to the absolute path on the dev machine
+    target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH=${SRC_ASSETS_PATH})
+else()
+    # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
+    if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+      target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH="@executable_path/../Resources/assets/")
+    else()
+      target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH="./assets/")
+    endif()
+endif()
