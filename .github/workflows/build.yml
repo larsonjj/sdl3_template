@@ -48,12 +48,12 @@ jobs:
         run: |
           mkdir build && cd build
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" ..
-          cmake --build . --target sdl-template --config Release
+          cmake --build ./ --target install --config Release
           cpack -G TGZ -C Release
       - name: Upload Package
         uses: actions/upload-artifact@v4
         with:
-          name: sdl-template-ubuntu-package
+          name: sdl-template-ubuntu-${{ matrix.target }}
           path: build/*.tar.gz
 
   build-mac:

@@ -147,15 +147,6 @@ if(APPLE)
   # note that fixup_bundle does not work on iOS, so you will want to use static libraries
   # or manually copy dylibs and set rpaths
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  #   INSTALL(CODE
-  #     "
-  #     include(BundleUtilities)
-  #     fixup_bundle(\"$<TARGET_BUNDLE_DIR:${EXECUTABLE_NAME}>\" \"\" \"${PROJECT_SOURCES}\")
-  #     "
-  #     COMPONENT Runtime
-  #   )
-  #   install(TARGETS ${EXECUTABLE_NAME} BUNDLE DESTINATION install)
-
     install(TARGETS ${EXECUTABLE_NAME}
         BUNDLE DESTINATION . COMPONENT Runtime
         RUNTIME DESTINATION bin COMPONENT Runtime)
@@ -201,9 +192,21 @@ if (WIN32)
 endif()
 
 if(UNIX AND NOT APPLE)
-  # if config is not debug set the variable to "-mwindows" else nothing
-  # set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
-  # target_link_options(${EXECUTABLE_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
+  install(TARGETS ${EXECUTABLE_NAME}
+  BUNDLE DESTINATION . COMPONENT Runtime
+  RUNTIME DESTINATION bin COMPONENT Runtime)
+
+  # Note Mac specific extension .app
+  # set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
+
+  # Directories to look for dependencies
+  # set(DIRS ${CMAKE_BINARY_DIR})
+
+  # install(CODE "include(BundleUtilities)
+  # fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
+
+  # set(CPACK_GENERATOR "DRAGNDROP")
+  # include(CPack)
 
   # Set CPack variables for generating .deb and .rpm packages
   set(CPACK_GENERATOR "TGZ")
