@@ -184,7 +184,6 @@ else()
         "${CMAKE_SOURCE_DIR}/assets"
         "${CMAKE_ANDROID_ASSETS_DIRECTORIES}"
       )
-    message(STATUS "Copying assets to ${CMAKE_ANDROID_ASSETS_DIRECTORIES}/assets")
   else()
     add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -218,6 +217,23 @@ if (WIN32)
     # Set this application as the default project
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
   endif()
+endif()
+
+### Linux ###
+if(UNIX AND NOT APPLE)
+  install(TARGETS ${EXECUTABLE_NAME}
+      BUNDLE DESTINATION . COMPONENT Runtime
+      RUNTIME DESTINATION bin COMPONENT Runtime)
+
+  # Note Mac specific extension .app
+  set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}")
+
+  # Directories to look for dependencies
+  set(DIRS ${CMAKE_BINARY_DIR})
+
+  set(CPACK_SOURCE_GENERATOR "TGZ")
+  include(CPack)
+
 endif()
 
 ####################################
