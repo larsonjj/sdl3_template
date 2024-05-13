@@ -5,6 +5,14 @@
 # Minimum version of CMake required to build this project
 cmake_minimum_required(VERSION 3.22.1)
 
+# Declare the project name, version, description, and languages used.
+project(sdl-template
+  VERSION 0.1.0
+  DESCRIPTION "SDL3 Template"
+  HOMEPAGE_URL "https://github.com/larsonjj/sdl_template"
+  LANGUAGES C CXX
+)
+
 # Include FetchContent module to download dependencies
 include(FetchContent)
 
@@ -13,14 +21,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   ## NOTE: This must be set before the project() call
   set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
 endif()
-
-# Declare the project name, version, description, and languages used.
-project(sdl-template
-  VERSION 0.1.0
-  DESCRIPTION "SDL3 Template"
-  HOMEPAGE_URL "https://github.com/larsonjj/sdl_template"
-  LANGUAGES C CXX
-)
 
 # Set CPP standard to 20 and disable extensions
 set(CMAKE_CXX_STANDARD 20)
@@ -64,6 +64,19 @@ set(AUTHOR_WEBSITE "https://example.com")
 set(AUTHOR_BUNDLE_ID "com.example.${EXECUTABLE_NAME}")
 set(APP_DESCRIPTION "SDL template application")
 
+####################################
+# CPack
+####################################
+
+# Setup CPack for packaging
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR}" "${PROJECT_NAME}" "ALL" "/")
+
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+
+set(CPACK_PACKAGE_CONTACT ${AUTHOR_EMAIL})
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 
 ####################################
 # Load Dependencies
@@ -168,6 +181,12 @@ if(APPLE)
         "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>.app/../Resources/assets"
     )
 
+    install(
+    FILES
+        ${PROJECT_SOURCE_DIR}/LICENSE
+        ${PROJECT_SOURCE_DIR}/README.md
+    DESTINATION .)
+
     install(CODE "include(BundleUtilities)
     fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
 
@@ -221,17 +240,39 @@ endif()
 
 ### Linux ###
 if(UNIX AND NOT APPLE)
-  install(TARGETS ${EXECUTABLE_NAME}
-      BUNDLE DESTINATION . COMPONENT Runtime
-      RUNTIME DESTINATION bin COMPONENT Runtime)
+  install(
+    TARGETS ${EXECUTABLE_NAME}
+    COMPONENT Runtime
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # Default: bin
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} # Default: lib
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} # Default: lib
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # Default: include
+  )
 
   # Note Mac specific extension .app
-  set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}")
+  set(APP "\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/${EXECUTABLE_NAME}")
 
   # Directories to look for dependencies
   set(DIRS ${CMAKE_BINARY_DIR})
+  message( STATUS "DIRS: ${DIRS}")
 
-  set(CPACK_SOURCE_GENERATOR "TGZ")
+  install(
+    FILES
+        ${PROJECT_SOURCE_DIR}/LICENSE
+        ${PROJECT_SOURCE_DIR}/README.md
+    DESTINATION .)
+  
+  install(
+    DIRECTORY
+        ${PROJECT_SOURCE_DIR}/assets
+    DESTINATION .)
+
+  install(CODE "include(InstallRequiredSystemLibraries) 
+    include(BundleUtilities)
+    fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
+
+  set(CPACK_GENERATOR "TGZ")
   include(CPack)
 
 endif()
