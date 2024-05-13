@@ -47,7 +47,7 @@ jobs:
       - name: Build and Package
         run: |
           mkdir build && cd build
-          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" ..
+          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -DSDL_STATIC=ON -DSDL_SHARED=OFF ..
           cmake --build ./ --target install --config Release
           cpack -C Release
       - name: Upload Build

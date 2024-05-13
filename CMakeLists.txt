@@ -242,15 +242,12 @@ endif()
 if(UNIX AND NOT APPLE)
   install(
     TARGETS ${EXECUTABLE_NAME}
-    COMPONENT Runtime
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # Default: bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # Default: bin (${c})
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} # Default: lib
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} # Default: lib
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # Default: include
   )
 
-  # Note Mac specific extension .app
   set(APP "\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/${EXECUTABLE_NAME}")
 
   # Directories to look for dependencies
