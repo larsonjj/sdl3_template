@@ -55,7 +55,7 @@ jobs:
         with:
           name: sdl-template-linux-${{ matrix.target }}
           path: |
-            ./*.tar.gz
+            ./build/*.tar.gz
 
   build-mac:
     name: MacOS Build
