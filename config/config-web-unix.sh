@@ -7,4 +7,4 @@ mkdir -p build/web
 
 cd build/web
 emcmake cmake ../..
-cmake --build ./
+cmake --build ./ --config Release --parallel
