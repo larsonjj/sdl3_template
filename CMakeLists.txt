@@ -133,8 +133,8 @@ add_subdirectory(external/SDL)
 # set(DAV1D_ASM OFF CACHE BOOL "" FORCE)
 # set(AOM_TARGET_CPU "generic" CACHE STRING "" FORCE)
 # set(SDL3IMAGE_VENDORED "" ON)
-option(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
-option(SDL3IMAGE_SAMPLES "Build SDL3_image with samples" OFF)
+# option(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
+# option(SDL3IMAGE_SAMPLES "Build SDL3_image with samples" OFF)
 add_git_dependency(
         SDL3_image
         https://github.com/libsdl-org/SDL_image.git
@@ -143,9 +143,9 @@ add_git_dependency(
 
 # Add SDL Mixer
 # set(SDL3MIXER_BUILD_SHARED_LIBS "Build SDL3_Mixer as a shared library" OFF)
-set(SDL3MIXER_INSTALL "" OFF) # disable install target for SDL mixer
-option(SDL3MIXER_SAMPLES "Build SDL3_Mixer with samples" OFF)
-option(SDL2MIXER_VENDORED "" ON)
+# set(SDL3MIXER_INSTALL "" OFF) # disable install target for SDL mixer
+# option(SDL3MIXER_SAMPLES "Build SDL3_Mixer with samples" OFF)
+# option(SDL2MIXER_VENDORED "" ON)
 add_git_dependency(
         SDL3_mixer
         https://github.com/libsdl-org/SDL_mixer.git
@@ -156,8 +156,8 @@ add_git_dependency(
 # set(SDL3TTF_BUILD_SHARED_LIBS "Build SDL3_TTF as a shared library" OFF)
 set(SDL3TTF_VENDORED "" ON)
 # set(SDL3TTF_INSTALL "" OFF) # disable install target for SDL ttf
-option(SDL3TTF_SAMPLES "Build SDL3_ttf with samples" OFF)
-option(SDL2TTF_VENDORED "" ON)
+# option(SDL3TTF_SAMPLES "Build SDL3_ttf with samples" OFF)
+# option(SDL2TTF_VENDORED "" ON)
 add_git_dependency(
         SDL3_ttf
         https://github.com/libsdl-org/SDL_ttf.git
