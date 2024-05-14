@@ -5,7 +5,6 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include <cmath>
 
 static int audio_open = 0;
 static Mix_Music *music = NULL;
@@ -48,7 +47,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     }
 
     // create a window
-    SDL_Window *window = SDL_CreateWindow("Window", 800, 450, SDL_WINDOW_RESIZABLE);
+    SDL_Window *window = SDL_CreateWindow("Window", 800, 450, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     if (!window) {
         return SDL_Fail();
     }
@@ -79,8 +78,6 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
                                                                        : "mono");
         if (loops) {
             SDL_Log(" (looping)\n");
-        } else {
-            putchar('\n');
         }
     }
     audio_open = 1;
@@ -95,8 +92,8 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     int flags = IMG_INIT_JPG | IMG_INIT_PNG;
     int initted = IMG_Init(flags);
     if ((initted & flags) != flags) {
-        printf("IMG_Init: Failed to init required jpg and png support!\n");
-        printf("IMG_Init: %s\n", IMG_GetError());
+        SDL_Log("IMG_Init: Failed to init required jpg and png support!\n");
+        SDL_Log("IMG_Init: %s\n", IMG_GetError());
         // handle error
     }
 
@@ -152,7 +149,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Color black = { 0x00, 0x00, 0x00, 0 };
     SDL_Color *forecol;
     SDL_Color *backcol;
-    int ptsize = 32;
+    int ptsize = 16;
     TextRenderMethod rendermethod = TextRenderSolid;
     int renderstyle = TTF_STYLE_NORMAL;
     int rendertype = RENDER_LATIN1;
@@ -173,7 +170,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
 
     TTF_SetFontStyle(font, renderstyle);
     TTF_SetFontOutline(font, outline);
-    // TTF_SetFontKerning(font, kerning);
+    TTF_SetFontKerning(font, kerning);
     TTF_SetFontHinting(font, hinting);
 
     char message[] = "FPS: 60";
@@ -293,7 +290,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
         music,
     };
 
-    // Mix_PlayMusic(music, loops);
+    Mix_PlayMusic(music, loops);
 
     return 0;
 }
