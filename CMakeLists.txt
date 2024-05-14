@@ -3,7 +3,7 @@
 ####################################
 
 # Minimum version of CMake required to build this project
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.29.3)
 
 # Declare the project name, version, description, and languages used.
 project(sdl-template
