@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
 #include <cmath>
 
 struct AppContext
@@ -57,6 +58,28 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     };
 
     SDL_Log("Application started successfully!");
+
+    SDL_Surface *surface = NULL;
+    SDL_Surface *temp = NULL;
+    SDL_Texture *texture = NULL;
+    int w, h;
+
+    surface = IMG_Load("./assets/bunny.png");
+    if (!surface) {
+        SDL_Log("Couldn't load %s: %s\n", "./assets/bunny.png", SDL_GetError());
+    }
+
+    temp = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32);
+    SDL_DestroySurface(surface);
+
+    texture = SDL_CreateTextureFromSurface(renderer, temp);
+    SDL_DestroySurface(temp);
+    if (!texture) {
+        SDL_Log("Couldn't create texture: %s\n", SDL_GetError());
+    }
+
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+    SDL_Log("W: %d | H: %d - %s\n", w, h, SDL_GetError());
 
     return 0;
 }
