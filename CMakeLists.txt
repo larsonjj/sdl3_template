@@ -133,7 +133,7 @@ add_subdirectory(external/SDL)
 set(DAV1D_ASM OFF CACHE BOOL "" FORCE)
 # set(AOM_TARGET_CPU "generic" CACHE STRING "" FORCE)
 # set(SDL3IMAGE_VENDORED "" ON)
-# option(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
+option(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
 # option(SDL3IMAGE_SAMPLES "Build SDL3_image with samples" OFF)
 add_git_dependency(
         SDL3_image
