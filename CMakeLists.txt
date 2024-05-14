@@ -130,7 +130,7 @@ add_subdirectory(external/SDL)
 
 # Add SDL Image
 # option(SDL3IMAGE_BUILD_SHARED_LIBS "Build SDL3_Image as a shared library" OFF) # don't build the shared library for SDL_image
-# set(DAV1D_ASM OFF CACHE BOOL "" FORCE)
+set(DAV1D_ASM OFF CACHE BOOL "" FORCE)
 # set(AOM_TARGET_CPU "generic" CACHE STRING "" FORCE)
 # set(SDL3IMAGE_VENDORED "" ON)
 # option(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
