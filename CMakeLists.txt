@@ -186,6 +186,10 @@ endif()
 ### MacOS/iOS ###
 if(APPLE)
   find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
+  find_library(COCOA_LIBRARY Cocoa)
+  find_library(IOKIT_LIBRARY IOKit)
+  find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
+  find_library(CORE_VIDEO_LIBRARY CoreVideo)
   # Add Logo
   # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
 
@@ -293,6 +297,7 @@ if (WIN32)
 
     # Set this application as the default project
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   endif()
 endif()
 
@@ -338,7 +343,7 @@ endif()
 
 # Link dependencies
 if (APPLE)
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3-static SDL3_image::SDL3_image-static SDL3_mixer::SDL3_mixer-static SDL3_ttf::SDL3_ttf-static "-framework ApplicationServices")
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3-static SDL3_image::SDL3_image-static SDL3_mixer::SDL3_mixer-static SDL3_ttf::SDL3_ttf-static ${APPLICATION_SERVICES_LIBRARY} ${COCOA_LIBRARY} ${IOKIT_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${CORE_VIDEO_LIBRARY})
 else()
   target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3-static SDL3_image::SDL3_image-static SDL3_mixer::SDL3_mixer-static SDL3_ttf::SDL3_ttf-static)
 endif()
