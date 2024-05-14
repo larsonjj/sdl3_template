@@ -14,6 +14,8 @@ project(sdl-template
 )
 
 if (APPLE)
+  # Enable Objective-C language for Apple platforms
+  # Needed for SDL_Image, SDL_TTF, and SDL_Mixer
   enable_language(OBJC)
 endif()
 
