@@ -1,5 +1,6 @@
 #include "SDL3_mixer/SDL_mixer.h"
 #include "SDL_init.h"
+#include "SDL_rect.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
@@ -47,7 +48,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     }
 
     // create a window
-    SDL_Window *window = SDL_CreateWindow("Window", 352, 430, SDL_WINDOW_RESIZABLE);
+    SDL_Window *window = SDL_CreateWindow("Window", 800, 450, SDL_WINDOW_RESIZABLE);
     if (!window) {
         return SDL_Fail();
     }
@@ -143,6 +144,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
 
     SDL_QueryTexture(texture, NULL, NULL, &w, &h);
     SDL_Log("W: %d | H: %d - %s\n", w, h, SDL_GetError());
+    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
     TTF_Font *font;
     SDL_Surface *text = NULL;
@@ -150,31 +152,31 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Color black = { 0x00, 0x00, 0x00, 0 };
     SDL_Color *forecol;
     SDL_Color *backcol;
-    int ptsize = 8;
-    TextRenderMethod rendermethod = TextRenderShaded;
+    int ptsize = 32;
+    TextRenderMethod rendermethod = TextRenderSolid;
     int renderstyle = TTF_STYLE_NORMAL;
     int rendertype = RENDER_LATIN1;
     int outline = 0;
-    int hinting = TTF_HINTING_NORMAL;
+    int hinting = TTF_HINTING_MONO;
     int kerning = 1;
     /* Default is black and white */
     forecol = &black;
     backcol = &white;
     int wrap = 0;
 
-    font = TTF_OpenFont("./assets/pixeloid_mono.ttf", ptsize);
+    font = TTF_OpenFont("./assets/monogram.ttf", ptsize);
     if (font == NULL) {
         SDL_Log("Couldn't load %d pt font from %s: %s\n",
-                ptsize, "./assets/pixeloid_mono.ttf", SDL_GetError());
+                ptsize, "./assets/monogram.ttf", SDL_GetError());
         return SDL_Fail();
     }
 
     TTF_SetFontStyle(font, renderstyle);
     TTF_SetFontOutline(font, outline);
-    TTF_SetFontKerning(font, kerning);
+    // TTF_SetFontKerning(font, kerning);
     TTF_SetFontHinting(font, hinting);
 
-    char message[] = "Hello, World!";
+    char message[] = "FPS: 60";
     char string[128];
     switch (rendermethod) {
     case TextRenderSolid:
@@ -280,6 +282,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Texture *font_texture = SDL_CreateTextureFromSurface(renderer, text);
     SDL_Log("Font is generally %d big, and string is %d big\n",
             TTF_FontHeight(font), text->h);
+    SDL_SetTextureScaleMode(font_texture, SDL_SCALEMODE_NEAREST);
 
     // set up the application data
     *appstate = new AppContext{
@@ -290,7 +293,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
         music,
     };
 
-    Mix_PlayMusic(music, loops);
+    // Mix_PlayMusic(music, loops);
 
     return 0;
 }
@@ -310,17 +313,24 @@ int SDL_AppIterate(void *appstate)
 {
     auto *app = static_cast<AppContext *>(appstate);
 
-    // draw a color
-    auto time = SDL_GetTicks() / 1000.f;
-    auto red = (std::sin(time) + 1) / 2.0 * 255;
-    auto green = (std::sin(time / 2) + 1) / 2.0 * 255;
-    auto blue = (std::sin(time) * 2 + 1) / 2.0 * 255;
-
-    SDL_SetRenderDrawColor(app->renderer, red, green, blue, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
     // Update
-    SDL_RenderTexture(app->renderer, app->font_texture, NULL, NULL);
-    SDL_RenderTexture(app->renderer, app->texture, NULL, NULL);
+
+    // Get Renderer height and width
+    int rendererWidth, rendererHeight;
+    SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
+
+    int width;
+    int height;
+    int margin = 16;
+    SDL_QueryTexture(app->font_texture, NULL, NULL, &width, &height);
+    SDL_FRect bunny_srcrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
+    SDL_FRect bunny_dstrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
+    SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = static_cast<float>(width), .h = static_cast<float>(height) };
+    SDL_FRect font_dstrect = { .x = static_cast<float>(margin), .y = static_cast<float>(rendererHeight - height - margin), .w = static_cast<float>(width), .h = static_cast<float>(height) };
+    SDL_RenderTexture(app->renderer, app->font_texture, &font_srcrect, &font_dstrect);
+    SDL_RenderTexture(app->renderer, app->texture, &bunny_srcrect, &bunny_dstrect);
     SDL_RenderPresent(app->renderer);
 
     return app->app_quit;
