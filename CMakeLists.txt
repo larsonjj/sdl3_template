@@ -134,7 +134,7 @@ add_subdirectory(external/SDL)
 # set(AOM_TARGET_CPU "generic" CACHE STRING "" FORCE)
 # set(SDL3IMAGE_VENDORED "" ON)
 # set(SDL3IMAGE_SAMPLES "Build SDL3_image with samples" OFF)
-# set(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
+set(SDL3IMAGE_INSTALL OFF) # disable install target for SDL Image
 add_git_dependency(
         SDL3_image
         https://github.com/libsdl-org/SDL_image.git
@@ -338,9 +338,9 @@ endif()
 
 # Link dependencies
 if (APPLE)
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf "-framework ApplicationServices")
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3-static SDL3_image::SDL3_image-static SDL3_mixer::SDL3_mixer-static SDL3_ttf::SDL3_ttf-static "-framework ApplicationServices")
 else()
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3-static SDL3_image::SDL3_image-static SDL3_mixer::SDL3_mixer-static SDL3_ttf::SDL3_ttf-static)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
