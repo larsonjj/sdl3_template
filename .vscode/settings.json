@@ -3,9 +3,7 @@
   "cmake.debugConfig": {
     "args": ["--verbose", "true"]
   },
-  "editor.defaultFormatter": "xaver.clang-format",
   "files.associations": {
-    "*.script": "lua",
     "*.m": "c"
   },
   "cmake.buildDirectory": "${workspaceFolder}/build",
