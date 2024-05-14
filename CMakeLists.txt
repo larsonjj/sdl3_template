@@ -46,8 +46,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
-# Enable/Disable shared libraries
-set(BUILD_SHARED_LIBS ON)
+# Disable shared libraries
+set(BUILD_SHARED_LIBS OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
@@ -124,7 +124,7 @@ endif()
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 
 # Add SDL
-add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
+add_subdirectory(external/SDL)
 
 # Add SDL Image
 option(SDL3IMAGE_BUILD_SHARED_LIBS "Build SDL3_Image as a shared library" OFF) # don't build the shared library for SDL_image
