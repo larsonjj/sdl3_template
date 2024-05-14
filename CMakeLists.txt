@@ -130,7 +130,7 @@ add_subdirectory(external/SDL)
 
 # Add SDL Image
 # option(SDL3IMAGE_BUILD_SHARED_LIBS "Build SDL3_Image as a shared library" OFF) # don't build the shared library for SDL_image
-set(DAV1D_ASM OFF CACHE BOOL "" FORCE)
+# set(DAV1D_ASM OFF CACHE BOOL "" FORCE)
 # set(AOM_TARGET_CPU "generic" CACHE STRING "" FORCE)
 # set(SDL3IMAGE_VENDORED "" ON)
 option(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
@@ -185,6 +185,7 @@ endif()
 
 ### MacOS/iOS ###
 if(APPLE)
+  find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
   # Add Logo
   # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
 
@@ -336,7 +337,11 @@ endif()
 ####################################
 
 # Link dependencies
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
+if (APPLE)
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf "-framework ApplicationServices")
+else()
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
+endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
