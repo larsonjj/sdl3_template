@@ -149,7 +149,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Color black = { 0x00, 0x00, 0x00, 0 };
     SDL_Color *forecol;
     SDL_Color *backcol;
-    int ptsize = 16;
+    int ptsize = 32;
     TextRenderMethod rendermethod = TextRenderSolid;
     int renderstyle = TTF_STYLE_NORMAL;
     int rendertype = RENDER_LATIN1;
