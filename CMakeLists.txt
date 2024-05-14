@@ -13,6 +13,13 @@ project(sdl-template
   LANGUAGES C CXX
 )
 
+if (APPLE)
+  enable_language(OBJC)
+endif()
+
+message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
+message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
+
 # Include FetchContent module to download dependencies
 include(FetchContent)
 
@@ -82,6 +89,16 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 # Load Dependencies
 ####################################
 
+function(add_git_dependency libName gitURL gitTag)
+  FetchContent_Declare(${libName}
+    GIT_REPOSITORY ${gitURL}
+    GIT_TAG ${gitTag}
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+  )
+  FetchContent_MakeAvailable(${libName})
+endfunction()
+
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 # Update submodules as needed
@@ -106,6 +123,33 @@ set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 
 # Add SDL
 add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
+
+# Add SDL Image
+option(SDL3IMAGE_BUILD_SHARED_LIBS "Build SDL3_Image as a shared library" OFF) # don't build the shared library for SDL_image
+option(SDL3IMAGE_INSTALL "" OFF) # disable install target for SDL Image
+add_git_dependency(
+        SDL3_image
+        https://github.com/libsdl-org/SDL_image.git
+        main
+)
+
+# Add SDL Mixer
+option(SDL3MIXER_VENDORED "" ON)
+option(SDL3MIXER_BUILD_SHARED_LIBS "Build SDL3_Mixer as a shared library" OFF)
+add_git_dependency(
+        SDL3_mixer
+        https://github.com/libsdl-org/SDL_mixer.git
+        main
+)
+
+# Add SDL_TTF
+option(SDL3TTF_BUILD_SHARED_LIBS "Build SDL3_TTF as a shared library" OFF)
+option(SDL3TTF_VENDORED "" ON)
+add_git_dependency(
+        SDL3_ttf
+        https://github.com/libsdl-org/SDL_ttf.git
+        main
+)
 
 ####################################
 # Platform Specific Configuration
@@ -259,13 +303,13 @@ if(UNIX AND NOT APPLE)
         ${PROJECT_SOURCE_DIR}/LICENSE
         ${PROJECT_SOURCE_DIR}/README.md
     DESTINATION .)
-  
+
   install(
     DIRECTORY
         ${PROJECT_SOURCE_DIR}/assets
     DESTINATION .)
 
-  install(CODE "include(InstallRequiredSystemLibraries) 
+  install(CODE "include(InstallRequiredSystemLibraries)
     include(BundleUtilities)
     fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
 
