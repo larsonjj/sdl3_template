@@ -187,7 +187,12 @@ endif()
 
 ### MacOS/iOS ###
 if(APPLE)
-  # find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
+  find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
+  if(NOT APPLICATION_SERVICES_LIBRARY)
+      message(FATAL_ERROR "ApplicationServices library not found")
+  else()
+      message(STATUS "Found ApplicationServices: ${APPLICATION_SERVICES_LIBRARY}")
+  endif()
   # find_library(COCOA_LIBRARY Cocoa)
   # find_library(IOKIT_LIBRARY IOKit)
   # find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
@@ -345,7 +350,7 @@ endif()
 
 # Link dependencies
 if (APPLE)
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf ${APPLICATION_SERVICES_LIBRARY} "-framework ApplicationServices")
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf ${APPLICATION_SERVICES_LIBRARY})
 else()
   target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
 endif()
