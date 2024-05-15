@@ -134,7 +134,7 @@ jobs:
           mkdir -p build 
           mkdir -p build/ios
           cd build/ios
-          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=x86_64 -DDCMAKE_OSX_SYSROOT=iphonesimulator -S ../..
+          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_SYSROOT=iphonesimulator -S ../..
       - name: Build
         run: |
           cd build/ios

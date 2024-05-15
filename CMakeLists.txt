@@ -3,7 +3,7 @@
 ####################################
 
 # Minimum version of CMake required to build this project
-cmake_minimum_required(VERSION 3.29.2)
+cmake_minimum_required(VERSION 3.22.1)
 
 # Declare the project name, version, description, and languages used.
 project(sdl-template
@@ -200,30 +200,32 @@ if(APPLE)
       src/ios_launch_screen.storyboard
   )
 
+  # CPack Bundler Configuration
+  set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+    # # On macOS, make a proper .app bundle instead of a bare executable
+    # BUNDLE True
+    # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
+    # will not launch.
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
+    MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
+    MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
+    MACOSX_BUNDLE_LONG_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
+    MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
+    MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
+    # MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
+    MACOSX_BUNDLE_GUI_IDENTIFIER "$(PRODUCT_BUNDLE_IDENTIFIER)"
+    # MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
+
+    # in Xcode, create a Scheme in the schemes dropdown for the app.
+    XCODE_GENERATE_SCHEME TRUE
+
+    # Custom Attributes Identification for Info.plist
+    # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
+  )
+
   ### MacOS ###
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    # CPack Bundler Configuration
-    set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-      # On macOS, make a proper .app bundle instead of a bare executable
-      BUNDLE True
-      # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
-      # will not launch.
-      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
-      MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
-      MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
-      MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
-      MACOSX_BUNDLE_LONG_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
-      MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
-      MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
-      MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
-      # MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
-
-      # in Xcode, create a Scheme in the schemes dropdown for the app.
-      XCODE_GENERATE_SCHEME TRUE
-
-      # Custom Attributes Identification for Info.plist
-      # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
-    )
     install(TARGETS ${EXECUTABLE_NAME}
         BUNDLE DESTINATION . COMPONENT Runtime
         RUNTIME DESTINATION bin COMPONENT Runtime)
@@ -251,7 +253,6 @@ if(APPLE)
 
     set(CPACK_GENERATOR "DRAGNDROP")
     include(CPack)
-
   endif()
 else()
   target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
@@ -344,7 +345,7 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>
 
 # Link dependencies
 
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
