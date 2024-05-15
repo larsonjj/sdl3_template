@@ -185,11 +185,11 @@ endif()
 
 ### MacOS/iOS ###
 if(APPLE)
-  find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
-  find_library(COCOA_LIBRARY Cocoa)
-  find_library(IOKIT_LIBRARY IOKit)
-  find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
-  find_library(CORE_VIDEO_LIBRARY CoreVideo)
+  # find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
+  # find_library(COCOA_LIBRARY Cocoa)
+  # find_library(IOKIT_LIBRARY IOKit)
+  # find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
+  # find_library(CORE_VIDEO_LIBRARY CoreVideo)
   # Add Logo
   # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
 
@@ -343,9 +343,9 @@ endif()
 
 # Link dependencies
 if (APPLE)
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3-static SDL3_image::SDL3_image-static SDL3_mixer::SDL3_mixer-static SDL3_ttf::SDL3_ttf-static ${APPLICATION_SERVICES_LIBRARY} ${COCOA_LIBRARY} ${IOKIT_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${CORE_VIDEO_LIBRARY})
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf ${APPLICATION_SERVICES_LIBRARY} "-framework ApplicationServices")
 else()
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3-static SDL3_image::SDL3_image-static SDL3_mixer::SDL3_mixer-static SDL3_ttf::SDL3_ttf-static)
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
