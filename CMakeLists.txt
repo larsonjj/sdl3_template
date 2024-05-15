@@ -195,7 +195,7 @@ if(APPLE)
   # endif()
 
   find_library(COCOA_LIBRARY Cocoa)
-  if(NOT APPLICATION_SERVICES_LIBRARY)
+  if(NOT COCOA_LIBRARY)
       message(FATAL_ERROR "COCOA_LIBRARY library not found")
   else()
       message(STATUS "Found COCOA_LIBRARY: ${COCOA_LIBRARY}")
