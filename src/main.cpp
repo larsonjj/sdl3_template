@@ -41,6 +41,10 @@ int SDL_Fail()
 
 int SDL_AppInit(void **appstate, int argc, char *argv[])
 {
+    // Avoid compiler warnings
+    (void)argv;
+    (void)argc;
+
     // init the library, here we make a window so we only need the Video capabilities.
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD) != 0) {
         return SDL_Fail();

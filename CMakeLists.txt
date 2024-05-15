@@ -19,9 +19,6 @@ if (APPLE)
   enable_language(OBJC)
 endif()
 
-message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
-message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
-
 # Include FetchContent module to download dependencies
 include(FetchContent)
 
@@ -64,6 +61,9 @@ file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/s
 
 # Set the name of the executable
 set(EXECUTABLE_NAME ${PROJECT_NAME})
+
+message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
+message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
 
 # Set assets path
 set(SRC_ASSETS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/assets/")
@@ -129,6 +129,7 @@ set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 
 # Add SDL
 add_subdirectory(external/SDL)
+set(SDL3_FOUND TRUE)
 
 # Add SDL Image
 # option(SDL3IMAGE_BUILD_SHARED_LIBS "Build SDL3_Image as a shared library" OFF) # don't build the shared library for SDL_image
@@ -187,12 +188,12 @@ endif()
 
 ### MacOS/iOS ###
 if(APPLE)
-  # find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
-  # if(NOT APPLICATION_SERVICES_LIBRARY)
-  #     message(FATAL_ERROR "APPLICATION_SERVICES_LIBRARY library not found")
-  # else()
-  #     message(STATUS "Found APPLICATION_SERVICES_LIBRARY: ${APPLICATION_SERVICES_LIBRARY}")
-  # endif()
+  find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
+  if(NOT APPLICATION_SERVICES_LIBRARY)
+      message(FATAL_ERROR "APPLICATION_SERVICES_LIBRARY library not found")
+  else()
+      message(STATUS "Found APPLICATION_SERVICES_LIBRARY: ${APPLICATION_SERVICES_LIBRARY}")
+  endif()
 
   # if (NOT IOS)
   #   find_library(COCOA_LIBRARY Cocoa)
@@ -375,9 +376,13 @@ endif()
 # Target Configuration
 ####################################
 
+# Add compiler errors/warnings flags
+target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /WX>)
+target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror>)
+
 # Link dependencies
 if (APPLE)
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf ${IOKIT_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${CORE_VIDEO_LIBRARY})
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf ${APPLICATION_SERVICES_LIBRARY} ${IOKIT_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${CORE_VIDEO_LIBRARY})
 else()
   target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
 endif()
