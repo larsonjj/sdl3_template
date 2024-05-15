@@ -187,12 +187,12 @@ endif()
 
 ### MacOS/iOS ###
 if(APPLE)
-  find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
-  if(NOT APPLICATION_SERVICES_LIBRARY)
-      message(FATAL_ERROR "APPLICATION_SERVICES_LIBRARY library not found")
-  else()
-      message(STATUS "Found APPLICATION_SERVICES_LIBRARY: ${APPLICATION_SERVICES_LIBRARY}")
-  endif()
+  # find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
+  # if(NOT APPLICATION_SERVICES_LIBRARY)
+  #     message(FATAL_ERROR "APPLICATION_SERVICES_LIBRARY library not found")
+  # else()
+  #     message(STATUS "Found APPLICATION_SERVICES_LIBRARY: ${APPLICATION_SERVICES_LIBRARY}")
+  # endif()
 
   find_library(COCOA_LIBRARY Cocoa)
   if(NOT APPLICATION_SERVICES_LIBRARY)
@@ -375,7 +375,7 @@ endif()
 
 # Link dependencies
 if (APPLE)
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf {APPLICATION_SERVICES_LIBRARY} {COCOA_LIBRARY} {IOKIT_LIBRARY} {CORE_FOUNDATION_LIBRARY} {CORE_VIDEO_LIBRARY})
+  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf ${APPLICATION_SERVICES_LIBRARY} ${COCOA_LIBRARY} ${IOKIT_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${CORE_VIDEO_LIBRARY})
 else()
   target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
 endif()
