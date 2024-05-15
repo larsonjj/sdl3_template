@@ -188,43 +188,6 @@ endif()
 
 ### MacOS/iOS ###
 if(APPLE)
-  find_library(APPLICATION_SERVICES_LIBRARY ApplicationServices)
-  if(NOT APPLICATION_SERVICES_LIBRARY)
-      message(FATAL_ERROR "APPLICATION_SERVICES_LIBRARY library not found")
-  else()
-      message(STATUS "Found APPLICATION_SERVICES_LIBRARY: ${APPLICATION_SERVICES_LIBRARY}")
-  endif()
-
-  # if (NOT IOS)
-  #   find_library(COCOA_LIBRARY Cocoa)
-  #   if(NOT COCOA_LIBRARY)
-  #       message(FATAL_ERROR "COCOA_LIBRARY library not found")
-  #   else()
-  #       message(STATUS "Found COCOA_LIBRARY: ${COCOA_LIBRARY}")
-  #   endif()
-  # endif()
-
-  find_library(IOKIT_LIBRARY IOKit)
-  if(NOT IOKIT_LIBRARY)
-      message(FATAL_ERROR "IOKIT_LIBRARY library not found")
-  else()
-      message(STATUS "Found IOKIT_LIBRARY: ${IOKIT_LIBRARY}")
-  endif()
-
-  find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
-  if(NOT CORE_FOUNDATION_LIBRARY)
-      message(FATAL_ERROR "CORE_FOUNDATION_LIBRARY library not found")
-  else()
-      message(STATUS "Found CORE_FOUNDATION_LIBRARY: ${CORE_FOUNDATION_LIBRARY}")
-  endif()
-
-  find_library(CORE_VIDEO_LIBRARY CoreVideo)
-  if(NOT CORE_VIDEO_LIBRARY)
-      message(FATAL_ERROR "CORE_VIDEO_LIBRARY library not found")
-  else()
-      message(STATUS "Found CORE_VIDEO_LIBRARY: ${CORE_VIDEO_LIBRARY}")
-  endif()
-
   # Add Logo
   # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
 
@@ -381,11 +344,8 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /W
 target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror>)
 
 # Link dependencies
-if (APPLE)
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf ${APPLICATION_SERVICES_LIBRARY} ${IOKIT_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${CORE_VIDEO_LIBRARY})
-else()
-  target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
-endif()
+
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
