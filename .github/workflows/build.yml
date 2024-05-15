@@ -12,10 +12,11 @@ jobs:
         target: [Windows]
 
     steps:
-      - uses: ilammy/setup-nasm@v1
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v4
       - name: Configure
         run: |
           mkdir build && cd build
