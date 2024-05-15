@@ -200,31 +200,30 @@ if(APPLE)
       src/ios_launch_screen.storyboard
   )
 
-  # CPack Bundler Configuration
-  set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-    # On macOS, make a proper .app bundle instead of a bare executable
-    BUNDLE True
-    # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
-    # will not launch.
-    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
-    MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
-    MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_LONG_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
-    MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
-    MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
-    # MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
-
-    # in Xcode, create a Scheme in the schemes dropdown for the app.
-    XCODE_GENERATE_SCHEME TRUE
-
-    # Custom Attributes Identification for Info.plist
-    # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
-  )
-
   ### MacOS ###
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    # CPack Bundler Configuration
+    set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+      # On macOS, make a proper .app bundle instead of a bare executable
+      BUNDLE True
+      # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
+      # will not launch.
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
+      MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
+      MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
+      MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
+      MACOSX_BUNDLE_LONG_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
+      MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
+      MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
+      MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
+      # MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
+
+      # in Xcode, create a Scheme in the schemes dropdown for the app.
+      XCODE_GENERATE_SCHEME TRUE
+
+      # Custom Attributes Identification for Info.plist
+      # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
+    )
     install(TARGETS ${EXECUTABLE_NAME}
         BUNDLE DESTINATION . COMPONENT Runtime
         RUNTIME DESTINATION bin COMPONENT Runtime)
