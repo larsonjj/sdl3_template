@@ -20,7 +20,7 @@ jobs:
       - name: Configure
         run: |
           mkdir build && cd build
-          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -A${{ matrix.arch }} ..
+          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -G Ninja -A${{ matrix.arch }} ..
       - name: Build
         run: cmake --build build --target sdl-template --config Release
       - name: Upload Build
