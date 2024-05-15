@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x64]
+        arch: [x64, ARM64]
         target: [Windows]
 
     steps:
@@ -20,7 +20,7 @@ jobs:
       - name: Configure
         run: |
           mkdir build && cd build
-          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -G Ninja -A${{ matrix.arch }} ..
+          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -G Ninja ..
       - name: Build
         run: cmake --build build --target sdl-template --config Release
       - name: Upload Build
