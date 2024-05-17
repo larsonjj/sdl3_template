@@ -128,8 +128,14 @@ set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 
 # Add SDL
-add_subdirectory(external/SDL)
-set(SDL3_FOUND TRUE)
+# add_subdirectory(external/SDL)
+# set(SDL3_FOUND TRUE)
+
+add_git_dependency(
+        SDL3
+        https://github.com/libsdl-org/SDL.git
+        main
+)
 
 # Add SDL Image
 # option(SDL3IMAGE_BUILD_SHARED_LIBS "Build SDL3_Image as a shared library" OFF) # don't build the shared library for SDL_image
