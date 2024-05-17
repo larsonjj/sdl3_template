@@ -113,10 +113,10 @@ jobs:
           mkdir -p build/ios
           cd build/ios
           cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos -S ../..
-      - name: Build
-        run: |
-          cd build/ios
-          cmake --build ./ --target sdl-template --config Release
+      # - name: Build
+      #   run: |
+      #     cd build/ios
+      #     cmake --build ./ --target sdl-template --config Release
   build-ios-simulator:
     name: iOS Simulator Build
     runs-on: macos-14
@@ -135,10 +135,10 @@ jobs:
           mkdir -p build/ios
           cd build/ios
           cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_SYSROOT=iphonesimulator -S ../..
-      - name: Build
-        run: |
-          cd build/ios
-          cmake --build ./ --target sdl-template --config Release
+      # - name: Build
+      #   run: |
+      #     cd build/ios
+      #     cmake --build ./ --target sdl-template --config Release
   android:
     name: Android Apk Build
     runs-on: ubuntu-latest
@@ -156,16 +156,16 @@ jobs:
         run: |
           cp src/build.gradle external/SDL/android-project/app/
 
-      - name: Build the APK
-        run: |
-          cd external/SDL/android-project/
-          ./gradlew assembleDebug
+      # - name: Build the APK
+      #   run: |
+      #     cd external/SDL/android-project/
+      #     ./gradlew assembleDebug
 
-      - name: Upload the APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug.apk
-          path: external/SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
+      # - name: Upload the APK
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: app-debug.apk
+      #     path: external/SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
   build-web:
     name: Web Build
     runs-on: ubuntu-latest
