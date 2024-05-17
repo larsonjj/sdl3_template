@@ -138,6 +138,23 @@ set(SDL3_FOUND TRUE)
 # set(SDL3IMAGE_VENDORED "" ON)
 # set(SDL3IMAGE_SAMPLES "Build SDL3_image with samples" OFF)
 set(SDL3IMAGE_INSTALL OFF) # disable install target for SDL Image
+# set(SDL3IMAGE_AVIF OFF)
+# set(SDL3IMAGE_BMP ON)
+# set(SDL3IMAGE_GIF OFF)
+# set(SDL3IMAGE_JPG OFF)
+# set(SDL3IMAGE_JXL OFF)
+# set(SDL3IMAGE_LBM OFF)
+# set(SDL3IMAGE_PCX OFF)
+# set(SDL3IMAGE_PNG ON)
+# set(SDL3IMAGE_PNM OFF)
+# set(SDL3IMAGE_QOI OFF)
+# set(SDL3IMAGE_SVG ON)
+# set(SDL3IMAGE_TGA OFF)
+# set(SDL3IMAGE_TIF OFF)
+# set(SDL3IMAGE_WEBP ON)
+# set(SDL3IMAGE_XCF OFF)
+# set(SDL3IMAGE_XPM OFF)
+# set(SDL3IMAGE_XV OFF)
 add_git_dependency(
         SDL3_image
         https://github.com/libsdl-org/SDL_image.git
@@ -149,11 +166,6 @@ add_git_dependency(
 # set(SDL3MIXER_INSTALL "" OFF) # disable install target for SDL mixer
 # set(SDL3MIXER_SAMPLES "" OFF)
 set(SDL3MIXER_VENDORED "" ON)
-set(SDL3MIXER_FLAC "" OFF)
-set(SDL3MIXER_GME "" OFF)
-set(SDL3MIXER_MOD "" OFF)
-set(SDL3MIXER_MIDI "" OFF)
-set(SDL3MIXER_OPUS "" OFF)
 add_git_dependency(
         SDL3_mixer
         https://github.com/libsdl-org/SDL_mixer.git
