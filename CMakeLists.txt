@@ -148,7 +148,12 @@ add_git_dependency(
 # set(SDL3MIXER_BUILD_SHARED_LIBS "Build SDL3_Mixer as a shared library" OFF)
 # set(SDL3MIXER_INSTALL "" OFF) # disable install target for SDL mixer
 # set(SDL3MIXER_SAMPLES "" OFF)
-# set(SDL3MIXER_VENDORED "" ON)
+set(SDL3MIXER_VENDORED "" ON)
+set(SDL3MIXER_FLAC "" OFF)
+set(SDL3MIXER_GME "" OFF)
+set(SDL3MIXER_MOD "" OFF)
+set(SDL3MIXER_MIDI "" OFF)
+set(SDL3MIXER_OPUS "" OFF)
 add_git_dependency(
         SDL3_mixer
         https://github.com/libsdl-org/SDL_mixer.git
