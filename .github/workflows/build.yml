@@ -95,77 +95,77 @@ jobs:
           name: sdl-template-apple-${{ matrix.target }}
           path: |
             ./build/mac/*.dmg
-  build-ios:
-    name: iOS Build
-    runs-on: macos-14
+  # build-ios:
+  #   name: iOS Build
+  #   runs-on: macos-14
 
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Setup Xcode version
-        uses: maxim-lobanov/setup-xcode@v1.6.0
-        with:
-          xcode-version: "15.3"
-      - name: Configure
-        run: |
-          mkdir -p build 
-          mkdir -p build/ios
-          cd build/ios
-          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos -S ../..
-      # - name: Build
-      #   run: |
-      #     cd build/ios
-      #     cmake --build ./ --target sdl-template --config Release
-  build-ios-simulator:
-    name: iOS Simulator Build
-    runs-on: macos-14
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Setup Xcode version
+  #       uses: maxim-lobanov/setup-xcode@v1.6.0
+  #       with:
+  #         xcode-version: "15.3"
+  #     - name: Configure
+  #       run: |
+  #         mkdir -p build
+  #         mkdir -p build/ios
+  #         cd build/ios
+  #         cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos -S ../..
+  # - name: Build
+  #   run: |
+  #     cd build/ios
+  #     cmake --build ./ --target sdl-template --config Release
+  # build-ios-simulator:
+  #   name: iOS Simulator Build
+  #   runs-on: macos-14
 
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Setup Xcode version
-        uses: maxim-lobanov/setup-xcode@v1.6.0
-        with:
-          xcode-version: "15.3"
-      - name: Configure
-        run: |
-          mkdir -p build 
-          mkdir -p build/ios
-          cd build/ios
-          cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_SYSROOT=iphonesimulator -S ../..
-      # - name: Build
-      #   run: |
-      #     cd build/ios
-      #     cmake --build ./ --target sdl-template --config Release
-  android:
-    name: Android Apk Build
-    runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Setup Xcode version
+  #       uses: maxim-lobanov/setup-xcode@v1.6.0
+  #       with:
+  #         xcode-version: "15.3"
+  #     - name: Configure
+  #       run: |
+  #         mkdir -p build
+  #         mkdir -p build/ios
+  #         cd build/ios
+  #         cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_SYSROOT=iphonesimulator -S ../..
+  # - name: Build
+  #   run: |
+  #     cd build/ios
+  #     cmake --build ./ --target sdl-template --config Release
+  # android:
+  #   name: Android Apk Build
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - uses: actions/setup-java@v4
+  #       with:
+  #         distribution: "temurin"
+  #         java-version: "17"
 
-      - name: Update the build.gradle
-        run: |
-          cp src/build.gradle external/SDL/android-project/app/
+  #     - name: Update the build.gradle
+  #       run: |
+  #         cp src/build.gradle external/SDL/android-project/app/
 
-      # - name: Build the APK
-      #   run: |
-      #     cd external/SDL/android-project/
-      #     ./gradlew assembleDebug
+  # - name: Build the APK
+  #   run: |
+  #     cd external/SDL/android-project/
+  #     ./gradlew assembleDebug
 
-      # - name: Upload the APK
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: app-debug.apk
-      #     path: external/SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
+  # - name: Upload the APK
+  #   uses: actions/upload-artifact@v4
+  #   with:
+  #     name: app-debug.apk
+  #     path: external/SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
   build-web:
     name: Web Build
     runs-on: ubuntu-latest
