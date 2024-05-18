@@ -172,11 +172,11 @@ add_git_dependency(
 # set(SDL3MIXER_INSTALL "" OFF) # disable install target for SDL mixer
 # set(SDL3MIXER_SAMPLES "" OFF)
 # set(SDL3MIXER_VENDORED "" ON)
-# add_git_dependency(
-#         SDL3_mixer
-#         https://github.com/libsdl-org/SDL_mixer.git
-#         main
-# )
+add_git_dependency(
+        SDL3_mixer
+        https://github.com/libsdl-org/SDL_mixer.git
+        main
+)
 
 # Add SDL_TTF
 # set(SDL3TTF_BUILD_SHARED_LIBS "Build SDL3_TTF as a shared library" OFF)
@@ -368,8 +368,8 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>
 
 # Link dependencies
 
-# target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
+# target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")

@@ -1,4 +1,4 @@
-// #include "SDL3_mixer/SDL_mixer.h"
+#include "SDL3_mixer/SDL_mixer.h"
 #include "SDL_init.h"
 #include "SDL_rect.h"
 #include <SDL3/SDL.h>
@@ -6,8 +6,8 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
-// static int audio_open = 0;
-// static Mix_Music *music = NULL;
+static int audio_open = 0;
+static Mix_Music *music = NULL;
 
 struct AppContext
 {
@@ -15,7 +15,7 @@ struct AppContext
     SDL_Renderer *renderer;
     SDL_Texture *texture;
     SDL_Texture *font_texture;
-    // Mix_Music *music;
+    Mix_Music *music;
     SDL_bool app_quit = SDL_FALSE;
 };
 
@@ -63,35 +63,35 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_RendererInfo rendererInfo;
     SDL_GetRendererInfo(renderer, &rendererInfo);
 
-    // SDL_AudioSpec spec;
-    // int loops = -1; // Infinite
-    // spec.freq = MIX_DEFAULT_FREQUENCY;
-    // spec.format = MIX_DEFAULT_FORMAT;
-    // spec.channels = MIX_DEFAULT_CHANNELS;
+    SDL_AudioSpec spec;
+    int loops = -1; // Infinite
+    spec.freq = MIX_DEFAULT_FREQUENCY;
+    spec.format = MIX_DEFAULT_FORMAT;
+    spec.channels = MIX_DEFAULT_CHANNELS;
 
-    // /* Open the audio device */
-    // if (Mix_OpenAudio(0, &spec) < 0) {
-    //     SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
-    //     return SDL_Fail();
-    // } else {
-    //     Mix_QuerySpec(&spec.freq, &spec.format, &spec.channels);
-    //     SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq,
-    //             (spec.format & 0xFF),
-    //             (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
-    //             (spec.channels > 2) ? "surround" : (spec.channels > 1) ? "stereo"
-    //                                                                    : "mono");
-    //     if (loops) {
-    //         SDL_Log(" (looping)\n");
-    //     }
-    // }
-    // audio_open = 1;
+    /* Open the audio device */
+    if (Mix_OpenAudio(0, &spec) < 0) {
+        SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
+        return SDL_Fail();
+    } else {
+        Mix_QuerySpec(&spec.freq, &spec.format, &spec.channels);
+        SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq,
+                (spec.format & 0xFF),
+                (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
+                (spec.channels > 2) ? "surround" : (spec.channels > 1) ? "stereo"
+                                                                       : "mono");
+        if (loops) {
+            SDL_Log(" (looping)\n");
+        }
+    }
+    audio_open = 1;
 
-    // /* Load the requested wave file */
-    // music = Mix_LoadMUS("./assets/background.mp3");
-    // if (music == NULL) {
-    //     SDL_Log("Couldn't load %s: %s\n", "./assets/background.mp3", SDL_GetError());
-    //     return SDL_Fail();
-    // }
+    /* Load the requested wave file */
+    music = Mix_LoadMUS("./assets/background.mp3");
+    if (music == NULL) {
+        SDL_Log("Couldn't load %s: %s\n", "./assets/background.mp3", SDL_GetError());
+        return SDL_Fail();
+    }
 
     int flags = IMG_INIT_JPG | IMG_INIT_PNG;
     int initted = IMG_Init(flags);
@@ -291,10 +291,10 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
         renderer,
         texture,
         font_texture,
-        // music,
+        music,
     };
 
-    // Mix_PlayMusic(music, loops);
+    Mix_PlayMusic(music, loops);
 
     return 0;
 }
@@ -341,7 +341,7 @@ void SDL_AppQuit(void *appstate)
 {
     auto *app = static_cast<AppContext *>(appstate);
     if (app) {
-        // Mix_FreeMusic(app->music);
+        Mix_FreeMusic(app->music);
         SDL_DestroyTexture(app->texture);
         SDL_DestroyTexture(app->font_texture);
         SDL_DestroyRenderer(app->renderer);
