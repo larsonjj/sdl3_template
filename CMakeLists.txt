@@ -134,7 +134,7 @@ set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 add_git_dependency(
         SDL3
         https://github.com/libsdl-org/SDL.git
-        main
+        6f2621438a65abae114a7210914352b4c1d9c6c3
 )
 
 # Add SDL Image
@@ -164,7 +164,7 @@ set(SDL3IMAGE_INSTALL OFF) # disable install target for SDL Image
 add_git_dependency(
         SDL3_image
         https://github.com/libsdl-org/SDL_image.git
-        main
+        1df59ea517bcb8b63aa2343f753ab7e811234ba7
 )
 
 # Add SDL Mixer
@@ -175,7 +175,7 @@ add_git_dependency(
 add_git_dependency(
         SDL3_mixer
         https://github.com/libsdl-org/SDL_mixer.git
-        main
+        4ed68d19e98d7eecdd10eb15166ffa2d8a0991ef
 )
 
 # Add SDL_TTF
@@ -187,7 +187,7 @@ set(SDL3TTF_VENDORED "" ON)
 add_git_dependency(
         SDL3_ttf
         https://github.com/libsdl-org/SDL_ttf.git
-        main
+        097920c14f58a4ec5d4ddd4b7a29e169549856ed
 )
 
 ####################################
