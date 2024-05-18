@@ -103,25 +103,6 @@ function(add_git_dependency libName gitURL gitTag)
   FetchContent_MakeAvailable(${libName})
 endfunction()
 
-# find_package(Git QUIET)
-# if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-# # Update submodules as needed
-#     option(GIT_SUBMODULE "Check submodules during build" ON)
-#     if(GIT_SUBMODULE)
-#         message(STATUS "Submodule update")
-#         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-#                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#                         RESULT_VARIABLE GIT_SUBMOD_RESULT)
-#         if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-#             message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-#         endif()
-#     endif()
-# endif()
-
-# if(NOT EXISTS "${PROJECT_SOURCE_DIR}/external/SDL/CMakeLists.txt")
-#     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
-# endif()
-
 # Configure SDL Cmake Options
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
@@ -129,8 +110,6 @@ set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 
 # Add SDL
 # add_subdirectory(external/SDL)
-# set(SDL3_FOUND TRUE)
-
 add_git_dependency(
         SDL3
         https://github.com/libsdl-org/SDL.git
@@ -138,29 +117,24 @@ add_git_dependency(
 )
 
 # Add SDL Image
-# option(SDL3IMAGE_BUILD_SHARED_LIBS "Build SDL3_Image as a shared library" OFF) # don't build the shared library for SDL_image
-# set(DAV1D_ASM OFF CACHE BOOL "" FORCE)
-# set(AOM_TARGET_CPU "generic" CACHE STRING "" FORCE)
-# set(SDL3IMAGE_VENDORED "" ON)
-# set(SDL3IMAGE_SAMPLES "Build SDL3_image with samples" OFF)
 set(SDL3IMAGE_INSTALL OFF) # disable install target for SDL Image
-# set(SDL3IMAGE_AVIF OFF)
-# set(SDL3IMAGE_BMP ON)
-# set(SDL3IMAGE_GIF OFF)
-# set(SDL3IMAGE_JPG OFF)
-# set(SDL3IMAGE_JXL OFF)
-# set(SDL3IMAGE_LBM OFF)
-# set(SDL3IMAGE_PCX OFF)
-# set(SDL3IMAGE_PNG ON)
-# set(SDL3IMAGE_PNM OFF)
-# set(SDL3IMAGE_QOI OFF)
-# set(SDL3IMAGE_SVG ON)
-# set(SDL3IMAGE_TGA OFF)
-# set(SDL3IMAGE_TIF OFF)
-# set(SDL3IMAGE_WEBP ON)
-# set(SDL3IMAGE_XCF OFF)
-# set(SDL3IMAGE_XPM OFF)
-# set(SDL3IMAGE_XV OFF)
+set(SDL3IMAGE_AVIF OFF)
+set(SDL3IMAGE_BMP ON)
+set(SDL3IMAGE_GIF OFF)
+set(SDL3IMAGE_JPG OFF)
+set(SDL3IMAGE_JXL OFF)
+set(SDL3IMAGE_LBM OFF)
+set(SDL3IMAGE_PCX OFF)
+set(SDL3IMAGE_PNG ON)
+set(SDL3IMAGE_PNM OFF)
+set(SDL3IMAGE_QOI OFF)
+set(SDL3IMAGE_SVG ON)
+set(SDL3IMAGE_TGA OFF)
+set(SDL3IMAGE_TIF OFF)
+set(SDL3IMAGE_WEBP ON)
+set(SDL3IMAGE_XCF OFF)
+set(SDL3IMAGE_XPM OFF)
+set(SDL3IMAGE_XV OFF)
 add_git_dependency(
         SDL3_image
         https://github.com/libsdl-org/SDL_image.git
@@ -168,10 +142,10 @@ add_git_dependency(
 )
 
 # Add SDL Mixer
-# set(SDL3MIXER_BUILD_SHARED_LIBS "Build SDL3_Mixer as a shared library" OFF)
-# set(SDL3MIXER_INSTALL "" OFF) # disable install target for SDL mixer
-# set(SDL3MIXER_SAMPLES "" OFF)
-# set(SDL3MIXER_VENDORED "" ON)
+set(SDL3MIXER_FLAC OFF)
+set(SDL3MIXER_GME OFF)
+set(SDL3MIXER_MOD OFF)
+set(SDL3MIXER_MIDI OFF)
 add_git_dependency(
         SDL3_mixer
         https://github.com/libsdl-org/SDL_mixer.git
@@ -179,11 +153,7 @@ add_git_dependency(
 )
 
 # Add SDL_TTF
-# set(SDL3TTF_BUILD_SHARED_LIBS "Build SDL3_TTF as a shared library" OFF)
-set(SDL3TTF_VENDORED "" ON)
-# set(SDL3TTF_INSTALL "" OFF) # disable install target for SDL ttf
-# option(SDL3TTF_SAMPLES "Build SDL3_ttf with samples" OFF)
-# option(SDL2TTF_VENDORED "" ON)
+set(SDL3TTF_VENDORED ON)
 add_git_dependency(
         SDL3_ttf
         https://github.com/libsdl-org/SDL_ttf.git
