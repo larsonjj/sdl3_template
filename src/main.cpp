@@ -1,6 +1,7 @@
+#define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include "SDL3_mixer/SDL_mixer.h"
-#include "SDL_init.h"
-#include "SDL_rect.h"
+// #include "SDL_init.h"
+// #include "SDL_rect.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
@@ -16,7 +17,7 @@ struct AppContext
     SDL_Texture *texture;
     SDL_Texture *font_texture;
     Mix_Music *music;
-    SDL_bool app_quit = SDL_FALSE;
+    SDL_AppResult app_quit = SDL_APP_SUCCESS;
 };
 
 typedef enum
@@ -33,20 +34,21 @@ typedef enum
     RENDER_UNICODE
 } RenderType;
 
-int SDL_Fail()
+SDL_AppResult SDL_Fail()
 {
     SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Error %s", SDL_GetError());
-    return -1;
+    return SDL_APP_FAILURE;
 }
 
-int SDL_AppInit(void **appstate, int argc, char *argv[])
+extern "C" {
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     // Avoid compiler warnings
     (void)argv;
     (void)argc;
 
     // init the library, here we make a window so we only need the Video capabilities.
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD) != 0) {
         return SDL_Fail();
     }
 
@@ -60,8 +62,8 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!renderer) {
         return SDL_Fail();
     }
-    SDL_RendererInfo rendererInfo;
-    SDL_GetRendererInfo(renderer, &rendererInfo);
+    // SDL_RendererInfo rendererInfo;
+    const char *rendererName = SDL_GetRendererName(renderer);
 
     SDL_AudioSpec spec;
     int loops = -1; // Infinite
@@ -70,7 +72,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     spec.channels = MIX_DEFAULT_CHANNELS;
 
     /* Open the audio device */
-    if (Mix_OpenAudio(0, &spec) < 0) {
+    if (!Mix_OpenAudio(0, &spec)) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         return SDL_Fail();
     } else {
@@ -93,20 +95,12 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_Fail();
     }
 
-    int flags = IMG_INIT_JPG | IMG_INIT_PNG;
-    int initted = IMG_Init(flags);
-    if ((initted & flags) != flags) {
-        SDL_Log("IMG_Init: Failed to init required jpg and png support!\n");
-        SDL_Log("IMG_Init: %s\n", IMG_GetError());
-        // handle error
-    }
-
-    if (TTF_Init() < 0) {
+    if (!TTF_Init()) {
         SDL_Log("Couldn't initialize TTF: %s\n", SDL_GetError());
         SDL_Fail();
     }
 
-    SDL_Log("Renderer Name: %s", rendererInfo.name);
+    SDL_Log("Renderer Name: %s", rendererName);
     SDL_Log("Video Driver: %s", SDL_GetCurrentVideoDriver());
 
     // print some information about the window
@@ -127,14 +121,14 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Surface *surface = NULL;
     SDL_Surface *temp = NULL;
     SDL_Texture *texture = NULL;
-    int w, h;
+    float w, h;
 
     surface = IMG_Load("./assets/bunny.png");
     if (!surface) {
         SDL_Log("Couldn't load %s: %s\n", "./assets/bunny.png", SDL_GetError());
     }
 
-    temp = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32);
+    temp = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
     SDL_DestroySurface(surface);
 
     texture = SDL_CreateTextureFromSurface(renderer, temp);
@@ -143,8 +137,8 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
         SDL_Log("Couldn't create texture: %s\n", SDL_GetError());
     }
 
-    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-    SDL_Log("W: %d | H: %d - %s\n", w, h, SDL_GetError());
+    SDL_GetTextureSize(texture, &w, &h);
+    SDL_Log("W: %f | H: %f - %s\n", w, h, SDL_GetError());
     SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
     TTF_Font *font;
@@ -181,13 +175,13 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
     char string[128];
     switch (rendermethod) {
     case TextRenderSolid:
-        text = TTF_RenderText_Solid(font, string, *forecol);
+        text = TTF_RenderText_Solid(font, string, sizeof(string), *forecol);
         break;
     case TextRenderShaded:
-        text = TTF_RenderText_Shaded(font, string, *forecol, *backcol);
+        text = TTF_RenderText_Shaded(font, string, sizeof(string), *forecol, *backcol);
         break;
     case TextRenderBlended:
-        text = TTF_RenderText_Blended(font, string, *forecol);
+        text = TTF_RenderText_Blended(font, string, sizeof(string), *forecol);
         break;
     }
 
@@ -196,23 +190,23 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
         switch (rendermethod) {
         case TextRenderSolid:
             if (wrap) {
-                text = TTF_RenderText_Solid_Wrapped(font, message, *forecol, 0);
+                text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
             } else {
-                text = TTF_RenderText_Solid(font, message, *forecol);
+                text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
             }
             break;
         case TextRenderShaded:
             if (wrap) {
-                text = TTF_RenderText_Shaded_Wrapped(font, message, *forecol, *backcol, 0);
+                text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
             } else {
-                text = TTF_RenderText_Shaded(font, message, *forecol, *backcol);
+                text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
             }
             break;
         case TextRenderBlended:
             if (wrap) {
-                text = TTF_RenderText_Blended_Wrapped(font, message, *forecol, 0);
+                text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
             } else {
-                text = TTF_RenderText_Blended(font, message, *forecol);
+                text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
             }
             break;
         }
@@ -222,56 +216,27 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
         switch (rendermethod) {
         case TextRenderSolid:
             if (wrap) {
-                text = TTF_RenderUTF8_Solid_Wrapped(font, message, *forecol, 0);
+                text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
             } else {
-                text = TTF_RenderUTF8_Solid(font, message, *forecol);
+                text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
             }
             break;
         case TextRenderShaded:
             if (wrap) {
-                text = TTF_RenderUTF8_Shaded_Wrapped(font, message, *forecol, *backcol, 0);
+                text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
             } else {
-                text = TTF_RenderUTF8_Shaded(font, message, *forecol, *backcol);
+                text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
             }
             break;
         case TextRenderBlended:
             if (wrap) {
-                text = TTF_RenderUTF8_Blended_Wrapped(font, message, *forecol, 0);
+                text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
             } else {
-                text = TTF_RenderUTF8_Blended(font, message, *forecol);
+                text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
             }
             break;
         }
         break;
-
-    case RENDER_UNICODE:
-    {
-        Uint16 *unicode_text = SDL_iconv_utf8_ucs2(message);
-        switch (rendermethod) {
-        case TextRenderSolid:
-            if (wrap) {
-                text = TTF_RenderUNICODE_Solid_Wrapped(font, unicode_text, *forecol, 0);
-            } else {
-                text = TTF_RenderUNICODE_Solid(font, unicode_text, *forecol);
-            }
-            break;
-        case TextRenderShaded:
-            if (wrap) {
-                text = TTF_RenderUNICODE_Shaded_Wrapped(font, unicode_text, *forecol, *backcol, 0);
-            } else {
-                text = TTF_RenderUNICODE_Shaded(font, unicode_text, *forecol, *backcol);
-            }
-            break;
-        case TextRenderBlended:
-            if (wrap) {
-                text = TTF_RenderUNICODE_Blended_Wrapped(font, unicode_text, *forecol, 0);
-            } else {
-                text = TTF_RenderUNICODE_Blended(font, unicode_text, *forecol);
-            }
-            break;
-        }
-        SDL_free(unicode_text);
-    } break;
     }
 
     if (text == NULL) {
@@ -282,7 +247,7 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
 
     SDL_Texture *font_texture = SDL_CreateTextureFromSurface(renderer, text);
     SDL_Log("Font is generally %d big, and string is %d big\n",
-            TTF_FontHeight(font), text->h);
+            TTF_GetFontHeight(font), text->h);
     SDL_SetTextureScaleMode(font_texture, SDL_SCALEMODE_NEAREST);
 
     // set up the application data
@@ -296,21 +261,21 @@ int SDL_AppInit(void **appstate, int argc, char *argv[])
 
     Mix_PlayMusic(music, loops);
 
-    return 0;
+    return SDL_APP_CONTINUE;
 }
 
-int SDL_AppEvent(void *appstate, const SDL_Event *event)
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
     auto *app = static_cast<AppContext *>(appstate);
 
     if (event->type == SDL_EVENT_QUIT) {
-        app->app_quit = SDL_TRUE;
+        app->app_quit = SDL_APP_SUCCESS;
     }
 
-    return 0;
+    return SDL_APP_CONTINUE;
 }
 
-int SDL_AppIterate(void *appstate)
+SDL_AppResult SDL_AppIterate(void *appstate)
 {
     auto *app = static_cast<AppContext *>(appstate);
 
@@ -322,10 +287,10 @@ int SDL_AppIterate(void *appstate)
     int rendererWidth, rendererHeight;
     SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
 
-    int width;
-    int height;
+    float width;
+    float height;
     int margin = 16;
-    SDL_QueryTexture(app->font_texture, NULL, NULL, &width, &height);
+    SDL_GetTextureSize(app->font_texture, &width, &height);
     SDL_FRect bunny_srcrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
     SDL_FRect bunny_dstrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
     SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = static_cast<float>(width), .h = static_cast<float>(height) };
@@ -337,20 +302,23 @@ int SDL_AppIterate(void *appstate)
     return app->app_quit;
 }
 
-void SDL_AppQuit(void *appstate)
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    auto *app = static_cast<AppContext *>(appstate);
-    if (app) {
-        Mix_FreeMusic(app->music);
-        SDL_DestroyTexture(app->texture);
-        SDL_DestroyTexture(app->font_texture);
-        SDL_DestroyRenderer(app->renderer);
-        SDL_DestroyWindow(app->window);
-        delete app;
+    (void)result;
+    if (appstate != NULL) {
+        auto *app = static_cast<AppContext *>(appstate);
+        if (app) {
+            Mix_FreeMusic(app->music);
+            SDL_DestroyTexture(app->texture);
+            SDL_DestroyTexture(app->font_texture);
+            SDL_DestroyRenderer(app->renderer);
+            SDL_DestroyWindow(app->window);
+            delete app;
+        }
     }
 
     TTF_Quit();
-    IMG_Quit();
     SDL_Quit();
     SDL_Log("Application quit successfully!");
+}
 }

@@ -22,10 +22,18 @@ endif()
 # Include FetchContent module to download dependencies
 include(FetchContent)
 
+# Find and include the Threads package
+find_package(Threads REQUIRED)
+if (Threads_FOUND)
+  message(STATUS "Threads package found.")
+else()
+  message(FATAL_ERROR "Threads package not found.")
+endif()
+
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   # Build universal binaries on Apple Silicon
   ## NOTE: This must be set before the project() call
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
+  set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "" FORCE)
 endif()
 
 # Set CPP standard to 20 and disable extensions
@@ -62,9 +70,11 @@ file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/s
 # Set the name of the executable
 set(EXECUTABLE_NAME ${PROJECT_NAME})
 
-# Include std c and cpp libraries statically
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
+# Include std C and C++ libraries statically only if not on Apple
+if (NOT APPLE)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
+endif()
 
 message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
@@ -116,7 +126,7 @@ set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 add_git_dependency(
   SDL3
   https://github.com/libsdl-org/SDL.git
-  main
+  preview-3.1.6
 )
 
 # Add SDL Image
@@ -141,7 +151,7 @@ set(SDL3IMAGE_XV OFF)
 add_git_dependency(
   SDL3_image
   https://github.com/libsdl-org/SDL_image.git
-  main
+  preview-3.1.0
 )
 
 # Add SDL Mixer
@@ -342,8 +352,7 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>
 
 # Link dependencies
 
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
-# target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf Threads::Threads)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
