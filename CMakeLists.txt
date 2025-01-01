@@ -130,24 +130,24 @@ add_git_dependency(
 )
 
 # Add SDL Image
-set(SDL3IMAGE_INSTALL OFF) # disable install target for SDL Image
-set(SDL3IMAGE_AVIF OFF)
-set(SDL3IMAGE_BMP ON)
-set(SDL3IMAGE_GIF OFF)
-set(SDL3IMAGE_JPG OFF)
-set(SDL3IMAGE_JXL OFF)
-set(SDL3IMAGE_LBM OFF)
-set(SDL3IMAGE_PCX OFF)
-set(SDL3IMAGE_PNG ON)
-set(SDL3IMAGE_PNM OFF)
-set(SDL3IMAGE_QOI OFF)
-set(SDL3IMAGE_SVG ON)
-set(SDL3IMAGE_TGA OFF)
-set(SDL3IMAGE_TIF OFF)
-set(SDL3IMAGE_WEBP ON)
-set(SDL3IMAGE_XCF OFF)
-set(SDL3IMAGE_XPM OFF)
-set(SDL3IMAGE_XV OFF)
+set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
+set(SDLIMAGE_AVIF OFF)
+set(SDLIMAGE_BMP ON)
+set(SDLIMAGE_GIF OFF)
+set(SDLIMAGE_JPG OFF)
+set(SDLIMAGE_JXL OFF)
+set(SDLIMAGE_LBM OFF)
+set(SDLIMAGE_PCX OFF)
+set(SDLIMAGE_PNG ON)
+set(SDLIMAGE_PNM OFF)
+set(SDLIMAGE_QOI OFF)
+set(SDLIMAGE_SVG ON)
+set(SDLIMAGE_TGA OFF)
+set(SDLIMAGE_TIF OFF)
+set(SDLIMAGE_WEBP ON)
+set(SDLIMAGE_XCF OFF)
+set(SDLIMAGE_XPM OFF)
+set(SDLIMAGE_XV OFF)
 add_git_dependency(
   SDL3_image
   https://github.com/libsdl-org/SDL_image.git
@@ -155,11 +155,11 @@ add_git_dependency(
 )
 
 # Add SDL Mixer
-set(SDL3MIXER_FLAC OFF)
-set(SDL3MIXER_GME OFF)
-set(SDL3MIXER_MOD OFF)
-set(SDL3MIXER_MIDI OFF)
-set(SDL3MIXER_OPUS OFF)
+set(SDLMIXER_FLAC OFF)
+set(SDLMIXER_GME OFF)
+set(SDLMIXER_MOD OFF)
+set(SDLMIXER_MIDI OFF)
+set(SDLMIXER_OPUS OFF)
 add_git_dependency(
   SDL3_mixer
   https://github.com/libsdl-org/SDL_mixer.git
@@ -167,14 +167,15 @@ add_git_dependency(
 )
 
 # Add Freetype
-add_git_dependency(
-  freetype
-  https://github.com/freetype/freetype.git
-  VER-2-13-3
-)
+# add_git_dependency(
+#   freetype
+#   https://github.com/freetype/freetype.git
+#   VER-2-13-3
+# )
 
 # Add SDL_TTF
-set(SDL3TTF_VENDORED ON)
+set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
+# set(SDLTTF_FREETYPE_VENDORED ON CACHE BOOL "" FORCE)
 add_git_dependency(
   SDL3_ttf
   https://github.com/libsdl-org/SDL_ttf.git
@@ -359,9 +360,7 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>
 
 # Link dependencies
 
-target_include_directories(${EXECUTABLE_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
-
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf Threads::Threads)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf Threads::Threads)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
