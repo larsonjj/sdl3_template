@@ -1,3 +1,4 @@
+#include "SDL3/SDL_stdinc.h"
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include "SDL3_mixer/SDL_mixer.h"
 // #include "SDL_init.h"
@@ -17,7 +18,7 @@ struct AppContext
     SDL_Texture *texture;
     SDL_Texture *font_texture;
     Mix_Music *music;
-    SDL_AppResult app_quit = SDL_APP_SUCCESS;
+    SDL_AppResult app_quit = SDL_APP_CONTINUE;
 };
 
 typedef enum
@@ -34,7 +35,7 @@ typedef enum
     RENDER_UNICODE
 } RenderType;
 
-SDL_AppResult SDL_Fail()
+SDL_AppResult(SDL_Fail)()
 {
     SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Error %s", SDL_GetError());
     return SDL_APP_FAILURE;
@@ -48,8 +49,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     (void)argc;
 
     // init the library, here we make a window so we only need the Video capabilities.
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD) != 0) {
-        return SDL_Fail();
+    // if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD) != 0) {
+    //     return (SDL_Fail)();
+    // }
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        return SDL_APP_FAILURE;
     }
 
     // create a window
@@ -88,10 +92,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
     audio_open = 1;
 
+    // Use CPP string concatenation to get the full path to the background music asset
+
+    const char *bg_music_asset_filepath = "assets/background.mp3";
+    const char *root_filepath = SDL_GetBasePath();
+    char combined_path[512];
+    SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bg_music_asset_filepath);
+
     /* Load the requested wave file */
-    music = Mix_LoadMUS("./assets/background.mp3");
+    music = Mix_LoadMUS(combined_path);
     if (music == NULL) {
-        SDL_Log("Couldn't load %s: %s\n", "./assets/background.mp3", SDL_GetError());
+        SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
         return SDL_Fail();
     }
 
@@ -122,10 +133,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Surface *temp = NULL;
     SDL_Texture *texture = NULL;
     float w, h;
+    const char *bunny_asset_filepath = "assets/bunny.png";
+    // Clear our combined path buffer
+    memset(combined_path, 0, sizeof(combined_path));
+    SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bunny_asset_filepath);
 
-    surface = IMG_Load("./assets/bunny.png");
+    surface = IMG_Load(combined_path);
     if (!surface) {
-        SDL_Log("Couldn't load %s: %s\n", "./assets/bunny.png", SDL_GetError());
+        SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
     }
 
     temp = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
@@ -152,17 +167,21 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     int renderstyle = TTF_STYLE_NORMAL;
     int rendertype = RENDER_LATIN1;
     int outline = 0;
-    int hinting = TTF_HINTING_MONO;
+    TTF_HintingFlags hinting = TTF_HINTING_MONO;
     int kerning = 1;
     /* Default is black and white */
     forecol = &black;
     backcol = &white;
     int wrap = 0;
+    const char *font_asset_filepath = "assets/monogram.ttf";
+    // Clear our combined path buffer
+    memset(combined_path, 0, sizeof(combined_path));
+    SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, font_asset_filepath);
 
-    font = TTF_OpenFont("./assets/monogram.ttf", ptsize);
+    font = TTF_OpenFont(combined_path, ptsize);
     if (font == NULL) {
         SDL_Log("Couldn't load %d pt font from %s: %s\n",
-                ptsize, "./assets/monogram.ttf", SDL_GetError());
+                ptsize, combined_path, SDL_GetError());
         return SDL_Fail();
     }
 
@@ -172,7 +191,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     TTF_SetFontHinting(font, hinting);
 
     char message[] = "FPS: 60";
-    char string[128];
+    char string[7];
     switch (rendermethod) {
     case TextRenderSolid:
         text = TTF_RenderText_Solid(font, string, sizeof(string), *forecol);
