@@ -311,7 +311,7 @@ if(UNIX AND NOT APPLE)
   # Fix error: conflicting types for ‘XGenericEventCookie’; have ‘struct XGenericEventCookie’
   # Context: https://github.com/libsdl-org/SDL/issues/7782
   # Code: https://github.com/libsdl-org/SDL/blob/main/src/video/x11/SDL_x11xinput2.h#L26
-  add_compile_definitions(HAVE_XGENERICEVENT=ON)
+  # add_compile_definitions(HAVE_XGENERICEVENT=ON)
   # target_compile_definitions(${EXECUTABLE_NAME} PUBLIC HAVE_XGENERICEVENT=1)
 
   install(
