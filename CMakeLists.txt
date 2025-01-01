@@ -174,7 +174,7 @@ add_git_dependency(
 )
 
 # Add SDL_TTF
-set(SDL3TTF_VENDORED OFF)
+set(SDL3TTF_VENDORED ON)
 add_git_dependency(
   SDL3_ttf
   https://github.com/libsdl-org/SDL_ttf.git
@@ -358,6 +358,8 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /W
 target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror>)
 
 # Link dependencies
+
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
 
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf Threads::Threads)
 
