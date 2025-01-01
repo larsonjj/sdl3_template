@@ -33,7 +33,7 @@ endif()
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   # Build universal binaries on Apple Silicon
   ## NOTE: This must be set before the project() call
-  set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "" FORCE)
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
 endif()
 
 # Set CPP standard to 20 and disable extensions
@@ -51,10 +51,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
-# if (APPLE)
-  # Disable shared libraries
-  set(BUILD_SHARED_LIBS OFF)
-# endif()
+# Disable shared libraries
+set(BUILD_SHARED_LIBS OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
