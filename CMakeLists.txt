@@ -320,7 +320,7 @@ if(UNIX AND NOT APPLE)
   # Context: https://github.com/libsdl-org/SDL/issues/7782
   # Code: https://github.com/libsdl-org/SDL/blob/main/src/video/x11/SDL_x11xinput2.h#L26
   # add_compile_definitions(SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1)
-  target_compile_definitions(${EXECUTABLE_NAME} SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1)
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1)
 
   install(
     TARGETS ${EXECUTABLE_NAME}
