@@ -166,6 +166,13 @@ add_git_dependency(
   main
 )
 
+# Add Freetype
+add_git_dependency(
+  freetype
+  https://github.com/freetype/freetype.git
+  VER-2-13-3
+)
+
 # Add SDL_TTF
 set(SDL3TTF_VENDORED ON)
 add_git_dependency(
@@ -352,7 +359,7 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>
 
 # Link dependencies
 
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf Threads::Threads)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer freetype SDL3_ttf::SDL3_ttf Threads::Threads)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
