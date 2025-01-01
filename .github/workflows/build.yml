@@ -186,7 +186,7 @@ jobs:
   #         path: build/_deps/sdl3-src/android-project/app/build/outputs/apk/debug/app-debug.apk
   build-web:
     name: Web Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -236,7 +236,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     # Specify runner + deployment step
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
