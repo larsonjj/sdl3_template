@@ -47,6 +47,8 @@ jobs:
         uses: jwlawson/actions-setup-cmake@v2
       - name: Setup Ninja
         uses: seanmiddleditch/gha-setup-ninja@v4
+      - name: Install x11
+        run: sudo apt-get install -y libx11-dev
       - name: Build and Package
         run: |
           mkdir build && cd build
