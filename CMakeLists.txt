@@ -68,6 +68,12 @@ file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/s
 # Set the name of the executable
 set(EXECUTABLE_NAME ${PROJECT_NAME})
 
+# Include std C and C++ libraries statically only if not on Apple
+if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
+endif()
+
 message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
 
