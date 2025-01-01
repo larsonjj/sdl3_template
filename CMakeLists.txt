@@ -51,7 +51,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
-if (NOT WIN32)
+if (APPLE)
   # Disable shared libraries
   set(BUILD_SHARED_LIBS OFF)
 endif()
