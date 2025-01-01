@@ -230,7 +230,7 @@ if(APPLE)
         RUNTIME DESTINATION bin COMPONENT Runtime)
 
     # Note Mac specific extension .app
-    set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
+    set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}")
 
     # Directories to look for dependencies
     set(DIRS ${CMAKE_BINARY_DIR})
