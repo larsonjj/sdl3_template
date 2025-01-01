@@ -58,6 +58,7 @@ jobs:
           libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
           libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev
       - name: Build and Package
+        ## -DHAVE_XGENERICEVENT=1 is needed to correctly handle X11 events
         run: |
           mkdir build && cd build
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -DHAVE_XGENERICEVENT=1 ..
