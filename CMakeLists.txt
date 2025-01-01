@@ -316,6 +316,9 @@ endif()
 
 ### Linux ###
 if(UNIX AND NOT APPLE)
+  # Fix error: conflicting types for ‘XGenericEventCookie’; have ‘struct XGenericEventCookie’
+  add_compile_definitions(SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS=1)
+
   install(
     TARGETS ${EXECUTABLE_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # Default: bin (${c})
