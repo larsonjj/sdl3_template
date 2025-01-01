@@ -174,7 +174,7 @@ add_git_dependency(
 )
 
 # Add SDL_TTF
-set(SDL3TTF_VENDORED ON)
+set(SDL3TTF_VENDORED OFF)
 add_git_dependency(
   SDL3_ttf
   https://github.com/libsdl-org/SDL_ttf.git
