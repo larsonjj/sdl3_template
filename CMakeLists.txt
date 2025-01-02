@@ -234,24 +234,27 @@ if(APPLE)
     install(TARGETS ${EXECUTABLE_NAME}
         BUNDLE DESTINATION . COMPONENT Runtime
         RUNTIME DESTINATION bin COMPONENT Runtime)
+    install(DIRECTORY assets/
+        DESTINATION ${EXECUTABLE_NAME}.app/Contents/Resources/assets
+        COMPONENT Resources)
+    install(FILES
+        ${PROJECT_SOURCE_DIR}/LICENSE
+        ${PROJECT_SOURCE_DIR}/README.md
+      DESTINATION .
+      COMPONENT Documentation)
+
+      # Copy assets to the build bundle (Only needed for local builds)
+      add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/../Resources/assets"
+    )
 
     # Note Mac specific extension .app
     set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
 
     # Directories to look for dependencies
     set(DIRS ${CMAKE_BINARY_DIR})
-
-    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>.app/../Resources/assets"
-    )
-
-    install(
-    FILES
-        ${PROJECT_SOURCE_DIR}/LICENSE
-        ${PROJECT_SOURCE_DIR}/README.md
-    DESTINATION .)
 
     install(CODE "include(BundleUtilities)
     fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")

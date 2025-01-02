@@ -19,6 +19,7 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@v4
       - name: Configure
         run: |
+          rm -rf build
           mkdir build && cd build
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -G Ninja ..
       - name: Build
@@ -60,6 +61,7 @@ jobs:
       - name: Build and Package
         ## -DHAVE_XGENERICEVENT=1 is needed to correctly handle X11 events
         run: |
+          rm -rf build
           mkdir build && cd build
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -DHAVE_XGENERICEVENT=1 ..
           cmake --build ./ --target install --config Release
@@ -89,7 +91,8 @@ jobs:
           xcode-version: "15.3"
       - name: Configure
         run: |
-          mkdir -p build 
+          rm -rf build
+          mkdir -p build
           mkdir -p build/mac
           cd build/mac
           cmake -G "Xcode" -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -S ../..
@@ -121,6 +124,7 @@ jobs:
   #         xcode-version: "15.3"
   #     - name: Configure
   #       run: |
+  #         rm -rf build
   #         mkdir -p build
   #         mkdir -p build/ios
   #         cd build/ios
@@ -143,6 +147,7 @@ jobs:
   #         xcode-version: "15.3"
   #     - name: Configure
   #       run: |
+  #         rm -rf build
   #         mkdir -p build
   #         mkdir -p build/ios
   #         cd build/ios
@@ -166,6 +171,7 @@ jobs:
 
   #     - name: Configure CMake
   #       run: |
+  #         rm -rf build
   #         mkdir -p build
   #         cd build
   #         cmake ..
