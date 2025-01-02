@@ -13,9 +13,24 @@ struct AppContext
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture;
+    SDL_Texture *font_texture;
     Mix_Music *music;
     SDL_AppResult app_quit = SDL_APP_CONTINUE;
 };
+
+typedef enum
+{
+    TextRenderSolid,
+    TextRenderShaded,
+    TextRenderBlended
+} TextRenderMethod;
+
+typedef enum
+{
+    RENDER_LATIN1,
+    RENDER_UTF8,
+    RENDER_UNICODE
+} RenderType;
 
 SDL_AppResult SDL_Fail()
 {
@@ -122,11 +137,131 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Log("W: %f | H: %f - %s\n", w, h, SDL_GetError());
     SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
+    if (!TTF_Init()) {
+        SDL_Log("Couldn't initialize TTF: %s\n", SDL_GetError());
+        SDL_Fail();
+    }
+
+    TTF_Font *font;
+    SDL_Surface *text = NULL;
+    SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
+    SDL_Color black = { 0x00, 0x00, 0x00, 0 };
+    SDL_Color *forecol;
+    SDL_Color *backcol;
+    int ptsize = 26;
+    TextRenderMethod rendermethod = TextRenderSolid;
+    int renderstyle = TTF_STYLE_NORMAL;
+    int rendertype = RENDER_LATIN1;
+    int outline = 0;
+    TTF_HintingFlags hinting = TTF_HINTING_MONO;
+    int kerning = 1;
+    /* Default is black and white */
+    forecol = &black;
+    backcol = &white;
+    int wrap = 0;
+
+    // Clear our combined path buffer
+    const char *font_asset_filepath = "assets/monogram.ttf";
+    memset(combined_path, 0, sizeof(combined_path));
+    SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, font_asset_filepath);
+
+    font = TTF_OpenFont(combined_path, ptsize);
+    if (font == NULL) {
+        SDL_Log("Couldn't load %d pt font from %s: %s\n",
+                ptsize, combined_path, SDL_GetError());
+        return SDL_Fail();
+    }
+
+    TTF_SetFontStyle(font, renderstyle);
+    TTF_SetFontOutline(font, outline);
+    TTF_SetFontKerning(font, kerning);
+    TTF_SetFontHinting(font, hinting);
+
+    char message[] = "FPS: 60";
+    char string[7];
+    switch (rendermethod) {
+    case TextRenderSolid:
+        text = TTF_RenderText_Solid(font, string, sizeof(string), *forecol);
+        break;
+    case TextRenderShaded:
+        text = TTF_RenderText_Shaded(font, string, sizeof(string), *forecol, *backcol);
+        break;
+    case TextRenderBlended:
+        text = TTF_RenderText_Blended(font, string, sizeof(string), *forecol);
+        break;
+    }
+
+    switch (rendertype) {
+    case RENDER_LATIN1:
+        switch (rendermethod) {
+        case TextRenderSolid:
+            if (wrap) {
+                text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
+            }
+            break;
+        case TextRenderShaded:
+            if (wrap) {
+                text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
+            } else {
+                text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
+            }
+            break;
+        case TextRenderBlended:
+            if (wrap) {
+                text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
+            }
+            break;
+        }
+        break;
+
+    case RENDER_UTF8:
+        switch (rendermethod) {
+        case TextRenderSolid:
+            if (wrap) {
+                text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
+            }
+            break;
+        case TextRenderShaded:
+            if (wrap) {
+                text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
+            } else {
+                text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
+            }
+            break;
+        case TextRenderBlended:
+            if (wrap) {
+                text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
+            }
+            break;
+        }
+        break;
+    }
+
+    if (text == NULL) {
+        SDL_Log("Couldn't render text: %s\n", SDL_GetError());
+        TTF_CloseFont(font);
+        return SDL_Fail();
+    }
+
+    SDL_Texture *font_texture = SDL_CreateTextureFromSurface(renderer, text);
+    SDL_Log("Font is generally %d big, and string is %d big\n",
+            TTF_GetFontHeight(font), text->h);
+    SDL_SetTextureScaleMode(font_texture, SDL_SCALEMODE_NEAREST);
+
     // set up the application data
     *appstate = new AppContext{
         window,
         renderer,
         texture,
+        font_texture,
         music
     };
 
