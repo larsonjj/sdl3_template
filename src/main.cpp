@@ -33,13 +33,12 @@ typedef enum
     RENDER_UNICODE
 } RenderType;
 
-SDL_AppResult(SDL_Fail)()
+SDL_AppResult SDL_Fail()
 {
     SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Error %s", SDL_GetError());
     return SDL_APP_FAILURE;
 }
 
-extern "C" {
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     // Avoid compiler warnings
@@ -317,7 +316,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
+    // Avoid compiler warnings
     (void)result;
+
     if (appstate != NULL) {
         auto *app = static_cast<AppContext *>(appstate);
         if (app) {
@@ -333,5 +334,4 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     TTF_Quit();
     SDL_Quit();
     SDL_Log("Application quit successfully!");
-}
 }
