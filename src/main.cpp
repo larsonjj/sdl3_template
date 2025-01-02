@@ -1,6 +1,6 @@
 // #include "SDL3/SDL_stdinc.h"
-#define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include "SDL3_mixer/SDL_mixer.h"
+#define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
