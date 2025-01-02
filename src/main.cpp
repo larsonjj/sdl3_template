@@ -298,15 +298,15 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     int rendererWidth, rendererHeight;
     SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
 
-    // float width;
-    // float height;
-    // int margin = 16;
-    // SDL_GetTextureSize(app->font_texture, &width, &height);
+    float width;
+    float height;
+    int margin = 16;
+    SDL_GetTextureSize(app->font_texture, &width, &height);
     SDL_FRect bunny_srcrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
     SDL_FRect bunny_dstrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
-    // SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = static_cast<float>(width), .h = static_cast<float>(height) };
-    // SDL_FRect font_dstrect = { .x = static_cast<float>(margin), .y = static_cast<float>(rendererHeight - height - margin), .w = static_cast<float>(width), .h = static_cast<float>(height) };
-    // SDL_RenderTexture(app->renderer, app->font_texture, &font_srcrect, &font_dstrect);
+    SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = static_cast<float>(width), .h = static_cast<float>(height) };
+    SDL_FRect font_dstrect = { .x = static_cast<float>(margin), .y = static_cast<float>(rendererHeight - height - margin), .w = static_cast<float>(width), .h = static_cast<float>(height) };
+    SDL_RenderTexture(app->renderer, app->font_texture, &font_srcrect, &font_dstrect);
     SDL_RenderTexture(app->renderer, app->texture, &bunny_srcrect, &bunny_dstrect);
 
     // Update screen buffer
