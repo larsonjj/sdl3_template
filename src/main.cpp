@@ -13,7 +13,7 @@ struct AppContext
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture;
-    SDL_Texture *font_texture;
+    // SDL_Texture *font_texture;
     Mix_Music *music;
     SDL_AppResult app_quit = SDL_APP_CONTINUE;
 };
@@ -261,7 +261,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         window,
         renderer,
         texture,
-        font_texture,
+        // font_texture,
         music
     };
 
@@ -298,10 +298,10 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     int rendererWidth, rendererHeight;
     SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
 
-    float width;
-    float height;
+    // float width;
+    // float height;
     // int margin = 16;
-    SDL_GetTextureSize(app->font_texture, &width, &height);
+    // SDL_GetTextureSize(app->font_texture, &width, &height);
     SDL_FRect bunny_srcrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
     SDL_FRect bunny_dstrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
     // SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = static_cast<float>(width), .h = static_cast<float>(height) };
@@ -325,7 +325,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
         if (app) {
             Mix_FreeMusic(app->music);
             SDL_DestroyTexture(app->texture);
-            SDL_DestroyTexture(app->font_texture);
+            // SDL_DestroyTexture(app->font_texture);
             SDL_DestroyRenderer(app->renderer);
             SDL_DestroyWindow(app->window);
             delete app;
