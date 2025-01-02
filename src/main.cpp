@@ -6,10 +6,13 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cmath>
 
+static int audio_open = 0;
+static Mix_Music *music = NULL;
 struct AppContext
 {
     SDL_Window *window;
     SDL_Renderer *renderer;
+    Mix_Music *music;
     SDL_AppResult app_quit = SDL_APP_CONTINUE;
 };
 
@@ -41,6 +44,41 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_Fail();
     }
 
+    SDL_AudioSpec spec;
+    int loops = -1; // Infinite
+    spec.freq = MIX_DEFAULT_FREQUENCY;
+    spec.format = MIX_DEFAULT_FORMAT;
+    spec.channels = MIX_DEFAULT_CHANNELS;
+
+    /* Open the audio device */
+    if (!Mix_OpenAudio(0, &spec)) {
+        SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
+        return SDL_Fail();
+    } else {
+        Mix_QuerySpec(&spec.freq, &spec.format, &spec.channels);
+        SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq,
+                (spec.format & 0xFF),
+                (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
+                (spec.channels > 2) ? "surround" : (spec.channels > 1) ? "stereo"
+                                                                       : "mono");
+        if (loops) {
+            SDL_Log(" (looping)\n");
+        }
+    }
+    audio_open = 1;
+
+    const char *bg_music_asset_filepath = "assets/background.mp3";
+    const char *root_filepath = SDL_GetBasePath();
+    char combined_path[512];
+    SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bg_music_asset_filepath);
+
+    /* Load the requested wave file */
+    music = Mix_LoadMUS(combined_path);
+    if (music == NULL) {
+        SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
+        return SDL_Fail();
+    }
+
     // print some information about the window
     SDL_ShowWindow(window);
     {
@@ -58,7 +96,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     *appstate = new AppContext{
         window,
         renderer,
+        music
     };
+
+    Mix_PlayMusic(music, loops);
 
     SDL_Log("Application started successfully!");
 
