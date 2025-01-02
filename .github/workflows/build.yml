@@ -19,7 +19,7 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@v4
       - name: Configure
         run: |
-          rm -rf build
+          rmdir /s /q build
           mkdir build && cd build
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -G Ninja ..
       - name: Build
