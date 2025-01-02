@@ -82,7 +82,7 @@ jobs:
 
   build-mac:
     name: MacOS Build
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
@@ -142,7 +142,7 @@ jobs:
   #     cmake --build ./ --target sdl-template --config Release
   # build-ios-simulator:
   #   name: iOS Simulator Build
-  #   runs-on: macos-14
+  #   runs-on: macos-15
 
   #   steps:
   #     - uses: actions/checkout@v4
