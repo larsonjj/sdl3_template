@@ -320,12 +320,19 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     // Avoid compiler warnings
     (void)result;
 
-    auto *app = static_cast<AppContext *>(appstate);
-    if (app) {
-        SDL_DestroyRenderer(app->renderer);
-        SDL_DestroyWindow(app->window);
-        delete app;
+    if (appstate != NULL) {
+        auto *app = static_cast<AppContext *>(appstate);
+        if (app) {
+            Mix_FreeMusic(app->music);
+            SDL_DestroyTexture(app->texture);
+            SDL_DestroyTexture(app->font_texture);
+            SDL_DestroyRenderer(app->renderer);
+            SDL_DestroyWindow(app->window);
+            delete app;
+        }
     }
 
+    TTF_Quit();
+    SDL_Quit();
     SDL_Log("Application quit successfully!");
 }
