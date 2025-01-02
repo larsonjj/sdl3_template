@@ -12,6 +12,7 @@ struct AppContext
 {
     SDL_Window *window;
     SDL_Renderer *renderer;
+    SDL_Texture *texture;
     Mix_Music *music;
     SDL_AppResult app_quit = SDL_APP_CONTINUE;
 };
@@ -92,16 +93,44 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         }
     }
 
+    SDL_Log("Application started successfully!");
+
+    SDL_Surface *surface = NULL;
+    SDL_Surface *temp = NULL;
+    SDL_Texture *texture = NULL;
+    float w, h;
+    const char *bunny_asset_filepath = "assets/bunny.png";
+    // Clear our combined path buffer
+    memset(combined_path, 0, sizeof(combined_path));
+    SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bunny_asset_filepath);
+
+    surface = IMG_Load(combined_path);
+    if (!surface) {
+        SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
+    }
+
+    temp = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
+    SDL_DestroySurface(surface);
+
+    texture = SDL_CreateTextureFromSurface(renderer, temp);
+    SDL_DestroySurface(temp);
+    if (!texture) {
+        SDL_Log("Couldn't create texture: %s\n", SDL_GetError());
+    }
+
+    SDL_GetTextureSize(texture, &w, &h);
+    SDL_Log("W: %f | H: %f - %s\n", w, h, SDL_GetError());
+    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
+
     // set up the application data
     *appstate = new AppContext{
         window,
         renderer,
+        texture,
         music
     };
 
     Mix_PlayMusic(music, loops);
-
-    SDL_Log("Application started successfully!");
 
     return SDL_APP_CONTINUE;
 }
@@ -129,6 +158,23 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     SDL_SetRenderDrawColor(app->renderer, red, green, blue, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
+    // Update the screen
+    // Get Renderer height and width
+    int rendererWidth, rendererHeight;
+    SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
+
+    // float width;
+    // float height;
+    // int margin = 16;
+    // SDL_GetTextureSize(app->font_texture, &width, &height);
+    SDL_FRect bunny_srcrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
+    SDL_FRect bunny_dstrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
+    // SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = static_cast<float>(width), .h = static_cast<float>(height) };
+    // SDL_FRect font_dstrect = { .x = static_cast<float>(margin), .y = static_cast<float>(rendererHeight - height - margin), .w = static_cast<float>(width), .h = static_cast<float>(height) };
+    // SDL_RenderTexture(app->renderer, app->font_texture, &font_srcrect, &font_dstrect);
+    SDL_RenderTexture(app->renderer, app->texture, &bunny_srcrect, &bunny_dstrect);
+
+    // Update screen buffer
     SDL_RenderPresent(app->renderer);
 
     return app->app_quit;
