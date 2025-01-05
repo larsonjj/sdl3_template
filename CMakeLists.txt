@@ -19,8 +19,8 @@ if (APPLE)
   enable_language(OBJC)
 endif()
 
-# Include FetchContent module to download dependencies
-include(FetchContent)
+# Add CPM dependency
+include(cmake/CPM.cmake)
 
 # Find and include the Threads package
 find_package(Threads REQUIRED)
@@ -105,27 +105,11 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 # Load Dependencies
 ####################################
 
-function(add_git_dependency libName gitURL gitTag)
-  FetchContent_Declare(${libName}
-    GIT_REPOSITORY ${gitURL}
-    GIT_TAG ${gitTag}
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-  )
-  FetchContent_MakeAvailable(${libName})
-endfunction()
-
-# Configure SDL Cmake Options
+# Add SDL
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-
-# Add SDL
-add_git_dependency(
-  SDL3
-  https://github.com/libsdl-org/SDL.git
-  preview-3.1.6
-)
+CPMAddPackage("gh:libsdl-org/SDL#preview-3.1.6")
 
 # Add SDL Image
 set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
@@ -146,11 +130,7 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-add_git_dependency(
-  SDL3_image
-  https://github.com/libsdl-org/SDL_image.git
-  preview-3.1.0
-)
+CPMAddPackage("gh:libsdl-org/SDL_image#preview-3.1.0")
 
 # Add SDL Mixer
 set(SDLMIXER_FLAC OFF)
@@ -158,19 +138,11 @@ set(SDLMIXER_GME OFF)
 set(SDLMIXER_MOD OFF)
 set(SDLMIXER_MIDI OFF)
 set(SDLMIXER_OPUS OFF)
-add_git_dependency(
-  SDL3_mixer
-  https://github.com/libsdl-org/SDL_mixer.git
-  main
-)
+CPMAddPackage("gh:libsdl-org/SDL_mixer#37c4504")
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-add_git_dependency(
-  SDL3_ttf
-  https://github.com/libsdl-org/SDL_ttf.git
-  main
-)
+CPMAddPackage("gh:libsdl-org/SDL_ttf#f2b4d9a")
 
 ####################################
 # Platform Specific Configuration
