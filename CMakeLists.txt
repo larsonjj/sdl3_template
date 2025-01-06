@@ -58,7 +58,7 @@ endif()
 
 # Add std C and C++ libraries statically only if not on Apple
 if(WIN32)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++ -lpthread")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -lpthread")
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
