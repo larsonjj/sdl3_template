@@ -51,8 +51,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
-# Disable shared libraries
-set(BUILD_SHARED_LIBS OFF)
+# Disable shared builds on platforms where it does not make sense to use them
+if (APPLE OR EMSCRIPTEN)
+    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+endif()
+
+# Add std C and C++ libraries statically only if not on Apple
+if(NOT APPLE)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
