@@ -167,7 +167,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     font = TTF_OpenFont(combined_path, ptsize);
     if (font == NULL) {
-        SDL_Log("Couldn't load %d pt font from %s: %s\n",
+        SDL_Log("Couldn't load %f pt font from %s: %s\n",
                 ptsize, combined_path, SDL_GetError());
         return SDL_Fail();
     }
