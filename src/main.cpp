@@ -148,7 +148,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Color black = { 0x00, 0x00, 0x00, 0 };
     SDL_Color *forecol;
     SDL_Color *backcol;
-    int ptsize = 32;
+    float ptsize = 32;
     TextRenderMethod rendermethod = TextRenderSolid;
     int renderstyle = TTF_STYLE_NORMAL;
     int rendertype = RENDER_LATIN1;
@@ -291,7 +291,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     auto green = (std::sin(time / 2) + 1) / 2.0 * 255;
     auto blue = (std::sin(time) * 2 + 1) / 2.0 * 255;
 
-    SDL_SetRenderDrawColor(app->renderer, red, green, blue, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(app->renderer, (uint8_t)red, (uint8_t)green, (uint8_t)blue, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
     // Update the screen
     // Get Renderer height and width
