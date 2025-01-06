@@ -57,9 +57,9 @@ if (APPLE OR EMSCRIPTEN)
 endif()
 
 # Add std C and C++ libraries statically only if not on Apple
-if(NOT APPLE)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
-endif()
+# if(NOT APPLE)
+#   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+# endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
@@ -332,7 +332,7 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>
 
 # Link dependencies
 
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf Threads::Threads)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
