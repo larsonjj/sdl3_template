@@ -52,9 +52,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
 # Disable shared builds on platforms where it does not make sense to use them
-if (APPLE OR EMSCRIPTEN)
+# if (APPLE OR EMSCRIPTEN)
     set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
-endif()
+# endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
