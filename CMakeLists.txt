@@ -57,9 +57,9 @@ if (APPLE OR EMSCRIPTEN)
 endif()
 
 # Add std C and C++ libraries statically only if not on Apple
-if(WIN32)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -lpthread")
-endif()
+# if(WIN32)
+#   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -lpthread")
+# endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
@@ -110,7 +110,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL#preview-3.1.6")
+CPMAddPackage("gh:libsdl-org/SDL#preview-3.1.8")
 
 # Add SDL Image
 set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
@@ -139,11 +139,11 @@ set(SDLMIXER_GME OFF)
 set(SDLMIXER_MOD OFF)
 set(SDLMIXER_MIDI OFF)
 set(SDLMIXER_OPUS OFF)
-CPMAddPackage("gh:libsdl-org/SDL_mixer#37c4504")
+CPMAddPackage("gh:libsdl-org/SDL_mixer#4870186")
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL_ttf#f2b4d9a")
+CPMAddPackage("gh:libsdl-org/SDL_ttf#2822076")
 
 ####################################
 # Platform Specific Configuration
