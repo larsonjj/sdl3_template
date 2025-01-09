@@ -268,14 +268,13 @@ if (WIN32)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   else()
-      # Non-MSVC compilers (e.g., MinGW)
-      set_target_properties(${EXECUTABLE_NAME}
-      PROPERTIES
-          LINK_FLAGS_DEBUG "-Wl,--subsystem,console"
-          LINK_FLAGS_RELEASE "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
-          LINK_FLAGS_RELWITHDEBINFO "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
-          LINK_FLAGS_MINSIZEREL "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
-      )
+    # Non-MSVC compilers (e.g., MinGW)
+    target_link_options(${EXECUTABLE_NAME} PRIVATE
+      $<$<CONFIG:Debug>:-Wl,--subsystem,console>
+      $<$<CONFIG:Release>:-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup>
+      $<$<CONFIG:RelWithDebInfo>:-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup>
+      $<$<CONFIG:MinSizeRel>:-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup>
+    )
   endif()
 endif()
 
