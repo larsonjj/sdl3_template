@@ -1,6 +1,6 @@
 [
   {
-    "name": "linux-default",
+    "name": "linux-gcc",
     "compilers": {
       "C": "gcc",
       "CXX": "gcc++"
@@ -10,7 +10,7 @@
     }
   },
   {
-    "name": "mac-default",
+    "name": "mac-clang",
     "compilers": {
       "C": "clang",
       "CXX": "clang++"
@@ -20,7 +20,7 @@
     }
   },
   {
-    "name": "win32-default",
+    "name": "win32-gcc",
     "compilers": {
       "C": "C:\\msys64\\mingw64\\bin\\gcc.exe",
       "CXX": "C:\\msys64\\mingw64\\bin\\g++.exe"

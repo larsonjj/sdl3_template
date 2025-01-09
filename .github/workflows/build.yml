@@ -38,6 +38,7 @@ jobs:
           path: |
             build/*.exe
             build/*.dll
+            build/assets/
   build-ubuntu:
     name: Ubuntu Build
     runs-on: ubuntu-24.04
