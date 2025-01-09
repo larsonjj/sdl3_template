@@ -20,6 +20,14 @@
     }
   },
   {
+    "name": "win32-msvc",
+    "visualStudio": "Visual Studio Build Tools 2017",
+    "visualStudioArchitecture": "x86_amd64",
+    "preferredGenerator": {
+      "name": "Ninja"
+    }
+  },
+  {
     "name": "win32-gcc",
     "compilers": {
       "C": "C:\\msys64\\mingw64\\bin\\gcc.exe",
