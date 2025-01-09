@@ -22,14 +22,6 @@ endif()
 # Add CPM dependency
 include(cmake/CPM.cmake)
 
-# Find and include the Threads package
-find_package(Threads REQUIRED)
-if (Threads_FOUND)
-  message(STATUS "Threads package found.")
-else()
-  message(FATAL_ERROR "Threads package not found.")
-endif()
-
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   # Build universal binaries on Apple Silicon
   ## NOTE: This must be set before the project() call
@@ -258,7 +250,7 @@ endif()
 
 ### Windows ###
 if (WIN32)
-  # Add std C and C++ libraries statically only if not on Apple
+  # Add std C and C++ libraries statically only on Windows
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc")
 
   ### Visual C++ Compiler ###
@@ -275,7 +267,7 @@ if (WIN32)
     # Set this application as the default project
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
-    else()
+  else()
       # Non-MSVC compilers (e.g., MinGW)
       set_target_properties(${EXECUTABLE_NAME}
       PROPERTIES
