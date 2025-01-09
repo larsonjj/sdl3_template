@@ -2,8 +2,8 @@
   {
     "name": "linux-default",
     "compilers": {
-      "C": "clang",
-      "CXX": "clang++"
+      "C": "gcc",
+      "CXX": "gcc++"
     },
     "preferredGenerator": {
       "name": "Ninja"
