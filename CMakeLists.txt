@@ -244,7 +244,7 @@ endif()
 if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -s USE_SDL=2 -gsource-map -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=1gb -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -gsource-map -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=1gb -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
   set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
@@ -269,11 +269,12 @@ if (WIN32)
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   else()
     # Non-MSVC compilers (e.g., MinGW)
-    target_link_options(${EXECUTABLE_NAME} PRIVATE
-      $<$<CONFIG:Debug>:-Wl,--subsystem,console>
-      $<$<CONFIG:Release>:-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup>
-      $<$<CONFIG:RelWithDebInfo>:-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup>
-      $<$<CONFIG:MinSizeRel>:-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup>
+    set_target_properties(${EXECUTABLE_NAME}
+      PROPERTIES
+        LINK_FLAGS_DEBUG "-Wl,--subsystem,console"
+        LINK_FLAGS_RELEASE "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
+        LINK_FLAGS_RELWITHDEBINFO "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
+        LINK_FLAGS_MINSIZEREL "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
     )
   endif()
 endif()
