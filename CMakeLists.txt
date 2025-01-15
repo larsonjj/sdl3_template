@@ -319,9 +319,12 @@ endif()
 # Target Configuration
 ####################################
 
-# Add compiler errors/warnings flags
-target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /WX>)
-target_compile_options(${EXECUTABLE_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror>)
+# Add error checking flags
+target_compile_options(${EXECUTABLE_NAME} PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+    $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Werror>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Werror>
+)
 
 # Link dependencies
 
