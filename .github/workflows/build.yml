@@ -129,7 +129,7 @@ jobs:
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: "15.3"
+          xcode-version: "16.2"
       - name: Configure
         run: |
           rm -rf build
@@ -152,7 +152,7 @@ jobs:
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: "15.3"
+          xcode-version: "16.2"
       - name: Configure
         run: |
           rm -rf build
