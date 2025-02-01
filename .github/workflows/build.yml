@@ -28,9 +28,9 @@ jobs:
           New-Item -ItemType Directory -Path "build" | Out-Null
           Set-Location -Path "build"
 
-          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -G Ninja ..
+          cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -DCMAKE_C_FLAGS="-mwindows" -G Ninja ..
       - name: Build
-        run: cmake --build build --target sdl-template --config Release  --verbose
+        run: cmake --build build --target sdl-template --config Release
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
@@ -72,7 +72,7 @@ jobs:
           rm -rf build
           mkdir build && cd build
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -DHAVE_XGENERICEVENT=1 ..
-          cmake --build ./ --target install --config Release  --verbose
+          cmake --build ./ --target install --config Release
           cpack -C Release
       - name: Upload Build
         uses: actions/upload-artifact@v4
@@ -107,7 +107,7 @@ jobs:
       - name: Build
         run: |
           cd build/mac
-          cmake --build ./ --target install --config Release  --verbose
+          cmake --build ./ --target install --config Release
       - name: Create DMG
         run: |
           cd build/mac
