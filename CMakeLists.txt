@@ -43,10 +43,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
-# Disable shared builds on platforms where it does not make sense to use them
-# if (APPLE OR EMSCRIPTEN)
-    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
-# endif()
+# Disable shared builds
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
@@ -118,7 +116,7 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-CPMAddPackage("gh:libsdl-org/SDL_image#prerelease-3.1.1")
+CPMAddPackage("gh:libsdl-org/SDL_image#release-3.2.0")
 
 # Add SDL Mixer
 set(SDLMIXER_FLAC OFF)
@@ -178,8 +176,8 @@ if(APPLE)
     MACOSX_BUNDLE_LONG_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
     MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
     MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
-    # MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
-    MACOSX_BUNDLE_GUI_IDENTIFIER "$(PRODUCT_BUNDLE_IDENTIFIER)"
+    MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
+    # MACOSX_BUNDLE_GUI_IDENTIFIER "$(PRODUCT_BUNDLE_IDENTIFIER)"
     # MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
 
     # in Xcode, create a Scheme in the schemes dropdown for the app.
@@ -188,6 +186,19 @@ if(APPLE)
     # Custom Attributes Identification for Info.plist
     # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
   )
+
+  if(CMAKE_SYSTEM_NAME MATCHES "iOS")
+    # Instruct CMake to only search for static libraries (".a")
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;")
+
+    target_link_libraries(${EXECUTABLE_NAME} PRIVATE
+      "-framework Foundation"
+      "-framework UIKit"
+      "-framework CoreGraphics"
+      "-framework ImageIO"
+      "-framework MobileCoreServices"
+    )
+  endif()
 
   ### MacOS ###
   if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
