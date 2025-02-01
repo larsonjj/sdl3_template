@@ -97,7 +97,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL#preview-3.1.8")
+CPMAddPackage("gh:libsdl-org/SDL#release-3.2.0")
 
 # Add SDL Image
 set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
@@ -118,7 +118,7 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-CPMAddPackage("gh:libsdl-org/SDL_image#preview-3.1.0")
+CPMAddPackage("gh:libsdl-org/SDL_image#prerelease-3.1.1")
 
 # Add SDL Mixer
 set(SDLMIXER_FLAC OFF)
@@ -255,27 +255,9 @@ if (WIN32)
 
   ### Visual C++ Compiler ###
   if(MSVC)
-    # Enable console for debug builds and disable it for release builds
-    set_target_properties(${EXECUTABLE_NAME}
-    PROPERTIES
-        LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
-        LINK_FLAGS_RELEASE "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-        LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-        LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows /ENTRY:mainCRTStartup"
-    )
-
     # Set this application as the default project
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
-  else()
-    # Non-MSVC compilers (e.g., MinGW)
-    set_target_properties(${EXECUTABLE_NAME}
-      PROPERTIES
-        LINK_FLAGS_DEBUG "-Wl,--subsystem,console"
-        LINK_FLAGS_RELEASE "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
-        LINK_FLAGS_RELWITHDEBINFO "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
-        LINK_FLAGS_MINSIZEREL "-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup"
-    )
   endif()
 endif()
 
