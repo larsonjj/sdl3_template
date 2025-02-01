@@ -30,11 +30,11 @@ jobs:
 
           cmake -DCMAKE_SYSTEM_NAME=${{ matrix.target }} -DCMAKE_SYSTEM_VERSION="10.0" -DCMAKE_SYSTEM_VERSION="10.0" -DCMAKE_EXE_LINKER_FLAGS="-Wl,--subsystem,windows -Wl,--entry,mainCRTStartup" -G Ninja ..
       - name: Build
-        run: cmake --build build --target sdl-template --config Release
+        run: cmake --build build --target sdl3_template --config Release
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
-          name: sdl-template-${{ matrix.target }}-${{ matrix.arch }}
+          name: sdl3_template-${{ matrix.target }}-${{ matrix.arch }}
           path: |
             build/*.exe
             build/*.dll
@@ -77,7 +77,7 @@ jobs:
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
-          name: sdl-template-${{ matrix.target }}-${{ matrix.arch }}
+          name: sdl3_template-${{ matrix.target }}-${{ matrix.arch }}
           path: |
             ./build/*.tar.gz
 
@@ -115,7 +115,7 @@ jobs:
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
-          name: sdl-template-apple-${{ matrix.target }}
+          name: sdl3_template-apple-${{ matrix.target }}
           path: |
             ./build/mac/*.dmg
   # build-ios:
@@ -140,7 +140,7 @@ jobs:
   # - name: Build
   #   run: |
   #     cd build/ios
-  #     cmake --build ./ --target sdl-template --config Release
+  #     cmake --build ./ --target sdl3_template --config Release
   # build-ios-simulator:
   #   name: iOS Simulator Build
   #   runs-on: macos-14
@@ -163,7 +163,7 @@ jobs:
   # - name: Build
   #   run: |
   #     cd build/ios
-  #     cmake --build ./ --target sdl-template --config Release
+  #     cmake --build ./ --target sdl3_template --config Release
   # android:
   #   name: Android Apk Build
   #   runs-on: ubuntu-latest
@@ -223,7 +223,7 @@ jobs:
       - name: Prepare for upload
         run: |
           mkdir _site
-          mv build/web/sdl-template.html _site/index.html
+          mv build/web/sdl3_template.html _site/index.html
           mv build/web/sdl-* _site/
           cp -R build/web/assets _site/
       - name: Fix permissions

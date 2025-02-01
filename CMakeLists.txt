@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 
 # Declare the project name, version, description, and languages used.
-project(sdl-template
+project(sdl3_template
   VERSION 0.1.0
   DESCRIPTION "SDL3 Template"
   HOMEPAGE_URL "https://github.com/larsonjj/sdl_template"
@@ -198,6 +198,13 @@ if(APPLE)
       "-framework ImageIO"
       "-framework MobileCoreServices"
     )
+
+    # Copy assets to the build bundle (Only needed for local builds)
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      "${CMAKE_SOURCE_DIR}/assets"
+      "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/assets"
+    )
   endif()
 
   ### MacOS ###
@@ -219,7 +226,7 @@ if(APPLE)
       COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets"
         "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/../Resources/assets"
-    )
+      )
 
     # Note Mac specific extension .app
     set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
