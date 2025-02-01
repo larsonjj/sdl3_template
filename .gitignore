@@ -23,3 +23,9 @@ SDL/
 .externalNativeBuild
 .cxx
 local.properties
+
+# Cmake
+_deps
+CMakeFiles
+cpm-package-lock.cmake
+CMakeCache.txt
