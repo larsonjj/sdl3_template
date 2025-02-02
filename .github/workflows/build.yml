@@ -176,6 +176,7 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
+          cache: gradle
 
       - name: Configure CMake
         run: |
@@ -191,13 +192,13 @@ jobs:
       - name: Build the APK
         run: |
           cd build/_deps/sdl-src/android-project/
-          ./gradlew assembleDebug
+          ./gradlew assemble
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
-          path: build/_deps/sdl-src/android-project/app/build/outputs/apk/debug/app-debug.apk
+          path: build/_deps/sdl-src/android-project/app/build/outputs/apk/debug/app-*.apk
   build-web:
     name: Web Build
     runs-on: ubuntu-24.04
