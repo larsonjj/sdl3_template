@@ -177,7 +177,7 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: gradle
-      - uses: android-actions/setup-ndk@v1
+      - uses: nttld/setup-ndk@v1
         with:
           ndk-version: "25b"
 
