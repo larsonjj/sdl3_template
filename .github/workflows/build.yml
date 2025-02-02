@@ -177,7 +177,8 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: gradle
-
+      - name: Update package list
+        run: sudo apt-get update
       - name: Install SDL dependencies
         run: |
           sudo apt-get install -y build-essential git make \
