@@ -164,40 +164,40 @@ jobs:
         run: |
           cd build/ios
           cmake --build ./ --target sdl3_template --config Release
-  # android:
-  #   name: Android Apk Build
-  #   runs-on: ubuntu-latest
+  android:
+    name: Android Apk Build
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: true
-  #     - uses: actions/setup-java@v4
-  #       with:
-  #         distribution: "temurin"
-  #         java-version: "17"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
 
-  #     - name: Configure CMake
-  #       run: |
-  #         rm -rf build
-  #         mkdir -p build
-  #         cd build
-  #         cmake ..
+      - name: Configure CMake
+        run: |
+          rm -rf build
+          mkdir -p build
+          cd build
+          cmake ..
 
-  #     - name: Update the build.gradle
-  #       run: |
-  #         cp src/build.gradle build/_deps/sdl-src/android-project/app/
+      - name: Update the build.gradle
+        run: |
+          cp src/build.gradle build/_deps/sdl-src/android-project/app/
 
-  #     - name: Build the APK
-  #       run: |
-  #         cd build/_deps/sdl-src/android-project/
-  #         ./gradlew assembleDebug
+      - name: Build the APK
+        run: |
+          cd build/_deps/sdl-src/android-project/
+          ./gradlew assembleDebug
 
-  #     - name: Upload the APK
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: app-debug.apk
-  #         path: build/_deps/sdl-src/android-project/app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload the APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: build/_deps/sdl-src/android-project/app/build/outputs/apk/debug/app-debug.apk
   build-web:
     name: Web Build
     runs-on: ubuntu-24.04
