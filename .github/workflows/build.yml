@@ -179,7 +179,7 @@ jobs:
           cache: gradle
       - uses: nttld/setup-ndk@v1
         with:
-          ndk-version: "25b"
+          ndk-version: r25b
 
       - name: Configure CMake
         run: |
