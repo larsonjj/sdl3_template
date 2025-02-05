@@ -6,6 +6,7 @@ enable_language(OBJC)
 ## NOTE: This must be set before the project() call
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
 
+# Set the executable name and ensure we use MacOS Bundle
 add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
 
 # Add Logo

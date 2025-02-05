@@ -1,3 +1,6 @@
+# Set the executable name
+add_executable(${EXECUTABLE_NAME})
+
 install(
     TARGETS ${EXECUTABLE_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # Default: bin (${c})

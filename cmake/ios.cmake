@@ -2,10 +2,11 @@
 # Needed for SDL_Image, SDL_TTF, and SDL_Mixer
 enable_language(OBJC)
 
+# Set the executable name
 add_executable(${EXECUTABLE_NAME})
 
 # Add Logo
-  # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
+#target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
 
 # NOTE: ios_launch_screen.storyboard is required for Apple's mobile platforms
 # It describes what to show the user while the application is starting up

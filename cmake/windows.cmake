@@ -1,3 +1,6 @@
+# Set the executable name
+add_executable(${EXECUTABLE_NAME})
+
 target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
 
 add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
