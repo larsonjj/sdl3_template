@@ -123,11 +123,11 @@ CPMAddPackage("gh:libsdl-org/SDL_ttf#2822076")
 ####################################
 
 ### Android ###
-if (ANDROID)
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
   include(cmake/android.cmake)
-elseif(APPLE AND CMAKE_SYSTEM_NAME MATCHES "iOS")
+elseif(CMAKE_SYSTEM_NAME MATCHES "iOS")
   include(cmake/ios.cmake)
-elseif(APPLE AND CMAKE_SYSTEM_NAME MATCHES "Darwin")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin" AND NOT CMAKE_SYSTEM_NAME MATCHES "iOS")
   include(cmake/macos.cmake)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
   include(cmake/linux.cmake)
