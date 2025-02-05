@@ -1,11 +1,3 @@
-# Enable Objective-C language for Apple platforms
-# Needed for SDL_Image, SDL_TTF, and SDL_Mixer
-enable_language(OBJC)
-
-# Build universal binaries on Apple Silicon
-## NOTE: This must be set before the project() call
-set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
-
 # Set the executable name and ensure we use MacOS Bundle
 add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
 

@@ -38,6 +38,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
 set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/src")
 
+# Enable Objective-C language for Apple platforms
+# Needed for SDL_Image, SDL_TTF, and SDL_Mixer
+enable_language(OBJC)
+
+# Build universal binaries on Apple Silicon
+## NOTE: This must be set before the project() call
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
+
 # Define PROJECT_SOURCES as a list of all source files
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
 
@@ -83,7 +91,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL#release-3.2.2")
+CPMAddPackage("gh:libsdl-org/SDL#release-3.2.0")
 
 # Add SDL Image
 set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
@@ -104,7 +112,7 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-CPMAddPackage("gh:libsdl-org/SDL_image#release-3.2.0")
+CPMAddPackage("gh:libsdl-org/SDL_image#prerelease-3.1.1")
 
 # Add SDL Mixer
 set(SDLMIXER_FLAC OFF)
@@ -127,7 +135,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Android")
   include(cmake/android.cmake)
 elseif(CMAKE_SYSTEM_NAME MATCHES "iOS")
   include(cmake/ios.cmake)
-elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin" AND NOT CMAKE_SYSTEM_NAME MATCHES "iOS")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   include(cmake/macos.cmake)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
   include(cmake/linux.cmake)
