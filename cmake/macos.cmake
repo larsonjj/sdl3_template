@@ -78,10 +78,8 @@ include(CPack)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   # Set the asset path macro to the absolute path on the dev machine and ensure SDL uses callbacks for main
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH=${SRC_ASSETS_PATH})
-endif()
-
-if (CMAKE_BUILD_TYPE MATCHES "Release")
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1 ASSETS_PATH=${SRC_ASSETS_PATH})
+else()
   # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable and ensure SDL uses callbacks for main
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH="@executable_path/../Resources/assets/")
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1 ASSETS_PATH="@executable_path/../Resources/assets/")
 endif()

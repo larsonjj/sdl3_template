@@ -291,7 +291,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     auto green = (std::sin(time / 2) + 1) / 2.0 * 255;
     auto blue = (std::sin(time) * 2 + 1) / 2.0 * 255;
 
-    SDL_SetRenderDrawColor(app->renderer, (uint8_t)red, (uint8_t)green, (uint8_t)blue, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(app->renderer, static_cast<uint8_t>(red), static_cast<uint8_t>(green), static_cast<uint8_t>(blue), SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
     // Update the screen
     // Get Renderer height and width
