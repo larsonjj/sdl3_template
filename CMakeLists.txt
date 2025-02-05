@@ -13,20 +13,8 @@ project(sdl3_template
   LANGUAGES C CXX
 )
 
-if (APPLE)
-  # Enable Objective-C language for Apple platforms
-  # Needed for SDL_Image, SDL_TTF, and SDL_Mixer
-  enable_language(OBJC)
-endif()
-
 # Add CPM dependency
 include(cmake/CPM.cmake)
-
-if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  # Build universal binaries on Apple Silicon
-  ## NOTE: This must be set before the project() call
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
-endif()
 
 # Set CPP standard to 20 and disable extensions
 set(CMAKE_CXX_STANDARD 20)
@@ -43,7 +31,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
-# Disable shared builds
+# Disable shared builds as we want a static binary
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -136,182 +124,19 @@ CPMAddPackage("gh:libsdl-org/SDL_ttf#2822076")
 
 ### Android ###
 if (ANDROID)
-	# SDL java JNI interface code is hardcoded to load libmain.so on android
-  # EXECUTABLE_NAME must be set to "main" for android
-	set(EXECUTABLE_NAME main)
-	add_library(${EXECUTABLE_NAME} SHARED)
+  include(cmake/android.cmake)
+elseif(APPLE AND CMAKE_SYSTEM_NAME MATCHES "iOS")
+  include(cmake/ios.cmake)
+elseif(APPLE AND CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  include(cmake/macos.cmake)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  include(cmake/linux.cmake)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
+  include(cmake/windows.cmake)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Emscripten")
+  include(cmake/emscripten.cmake)
 else()
-  ### MacOS ###
-  if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
-  else()
-    add_executable(${EXECUTABLE_NAME})
-  endif()
-endif()
-
-### MacOS/iOS ###
-if(APPLE)
-  # Add Logo
-  # target_sources("${EXECUTABLE_NAME}" PRIVATE "assets/logo.png")
-
-  # NOTE: ios_launch_screen.storyboard is required for Apple's mobile platforms
-  # It describes what to show the user while the application is starting up
-  # Referenced inside Info.plist.in
-  target_sources(${EXECUTABLE_NAME}
-  PRIVATE
-      ${PROJECT_SOURCES}
-      src/ios_launch_screen.storyboard
-  )
-
-  # CPack Bundler Configuration
-  set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-    # # On macOS, make a proper .app bundle instead of a bare executable
-    # BUNDLE True
-    # Set the Info.plist file for Apple Mobile platforms. Without this file, your app
-    # will not launch.
-    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in"
-    MACOSX_BUNDLE_BUNDLE_NAME ${EXECUTABLE_NAME}
-    MACOSX_BUNDLE_BUNDLE_VERSION "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_LONG_VERSION_STRING "${CMAKE_PROJECT_VERSION}"
-    MACOSX_BUNDLE_COPYRIGHT "Copyright ©${CURRENTYEAR} ${AUTHOR_NAME} [${AUTHOR_EMAIL}]. All rights reserved."
-    MACOSX_BUNDLE_INFO_STRING "${AUTHOR_WEBSITE}"
-    MACOSX_BUNDLE_GUI_IDENTIFIER ${AUTHOR_BUNDLE_ID}
-    # MACOSX_BUNDLE_GUI_IDENTIFIER "$(PRODUCT_BUNDLE_IDENTIFIER)"
-    # MACOSX_BUNDLE_ICON_FILE "assets/logo.png"
-
-    # in Xcode, create a Scheme in the schemes dropdown for the app.
-    XCODE_GENERATE_SCHEME TRUE
-
-    # Custom Attributes Identification for Info.plist
-    # XCODE_ATTRIBUTE_CURRENTYEAR "${CURRENTYEAR}"
-  )
-
-  if(CMAKE_SYSTEM_NAME MATCHES "iOS")
-    # Instruct CMake to only search for static libraries (".a")
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;")
-
-    target_link_libraries(${EXECUTABLE_NAME} PRIVATE
-      "-framework Foundation"
-      "-framework UIKit"
-      "-framework CoreGraphics"
-      "-framework ImageIO"
-      "-framework MobileCoreServices"
-    )
-
-    # Copy assets to the build bundle (Only needed for local builds)
-    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-      "${CMAKE_SOURCE_DIR}/assets"
-      "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/assets"
-    )
-  endif()
-
-  ### MacOS ###
-  if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    install(TARGETS ${EXECUTABLE_NAME}
-        BUNDLE DESTINATION . COMPONENT Runtime
-        RUNTIME DESTINATION bin COMPONENT Runtime)
-    install(DIRECTORY assets/
-        DESTINATION ${EXECUTABLE_NAME}.app/Contents/Resources/assets
-        COMPONENT Resources)
-    install(FILES
-        ${PROJECT_SOURCE_DIR}/LICENSE
-        ${PROJECT_SOURCE_DIR}/README.md
-      DESTINATION .
-      COMPONENT Documentation)
-
-      # Copy assets to the build bundle (Only needed for local builds)
-      add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/../Resources/assets"
-      )
-
-    # Note Mac specific extension .app
-    set(APP "\${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_NAME}.app")
-
-    # Directories to look for dependencies
-    set(DIRS ${CMAKE_BINARY_DIR})
-
-    install(CODE "include(BundleUtilities)
-    fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
-
-    set(CPACK_GENERATOR "DRAGNDROP")
-    include(CPack)
-  endif()
-else()
-  target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
-
-  if (ANDROID)
-    add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        "${CMAKE_ANDROID_ASSETS_DIRECTORIES}"
-      )
-  else()
-    add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-          "${CMAKE_SOURCE_DIR}/assets"
-          "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/assets"
-      )
-  endif()
-endif()
-
-### Emscripten/Web ###
-if(CMAKE_SYSTEM_NAME MATCHES Emscripten)
-  set(CMAKE_EXECUTABLE_SUFFIX ".html")
-  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -gsource-map -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=1gb -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
-  set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
-endif()
-
-### Windows ###
-if (WIN32)
-  # Add std C and C++ libraries statically only on Windows
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc")
-
-  ### Visual C++ Compiler ###
-  if(MSVC)
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
-    set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
-  endif()
-endif()
-
-### Linux ###
-if(UNIX AND NOT APPLE)
-  install(
-    TARGETS ${EXECUTABLE_NAME}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # Default: bin (${c})
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} # Default: lib
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} # Default: lib
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # Default: include
-  )
-
-  set(APP "\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/${EXECUTABLE_NAME}")
-
-  # Directories to look for dependencies
-  set(DIRS ${CMAKE_BINARY_DIR})
-  message( STATUS "DIRS: ${DIRS}")
-
-  install(
-    FILES
-        ${PROJECT_SOURCE_DIR}/LICENSE
-        ${PROJECT_SOURCE_DIR}/README.md
-    DESTINATION .)
-
-  install(
-    DIRECTORY
-        ${PROJECT_SOURCE_DIR}/assets
-    DESTINATION .)
-
-  install(CODE "include(InstallRequiredSystemLibraries)
-    include(BundleUtilities)
-    fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
-
-  set(CPACK_GENERATOR "TGZ")
-  include(CPack)
-
+  message(FATAL_ERROR "Unsupported platform")
 endif()
 
 ####################################
@@ -333,12 +158,5 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
 
     # Set the asset path macro to the absolute path on the dev machine
-    target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH=${SRC_ASSETS_PATH})
-else()
-    # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
-    if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-      target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH="@executable_path/../Resources/assets/")
-    else()
-      target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH="./assets/")
-    endif()
+    target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH=${SRC_ASSETS_PATH})
 endif()
