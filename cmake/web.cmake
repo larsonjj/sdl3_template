@@ -15,11 +15,11 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -gsource-m
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
-  # Set the asset path macro to the absolute path on the dev machine
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH=${SRC_ASSETS_PATH})
+  # Set the asset path macro to the absolute path on the dev machine and ensure SDL uses callbacks for main
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1 ASSETS_PATH=${SRC_ASSETS_PATH})
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Release")
-  # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH="./assets/")
+  # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable and ensure SDL uses callbacks for main
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1 ASSETS_PATH="./assets/")
 endif()
