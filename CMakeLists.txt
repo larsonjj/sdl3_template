@@ -116,7 +116,7 @@ CPMAddPackage("gh:libsdl-org/SDL_mixer#4870186")
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL_ttf#preview-3.1.0")
+CPMAddPackage("gh:libsdl-org/SDL_ttf#2822076")
 
 ####################################
 # Platform Specific Configuration
