@@ -78,5 +78,5 @@ include(CPack)
 
 # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH="@executable_path/../Resources/assets/")
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH="@executable_path/../Resources/assets/")
 endif()

@@ -158,5 +158,5 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
 
     # Set the asset path macro to the absolute path on the dev machine
-    target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH=${SRC_ASSETS_PATH})
+    target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS ASSETS_PATH=${SRC_ASSETS_PATH})
 endif()
