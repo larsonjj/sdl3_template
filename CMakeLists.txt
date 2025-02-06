@@ -31,8 +31,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
-# Disable shared builds as we want a static binary
-set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "iOS" OR CMAKE_SYSTEM_NAME MATCHES "Emscripten")
+  # Disable shared builds as we want a static binary
+  set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
@@ -87,7 +89,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL#release-3.2.0")
+CPMAddPackage("gh:libsdl-org/SDL#release-3.2.2")
 
 # Add SDL Image
 set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
@@ -108,7 +110,7 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-CPMAddPackage("gh:libsdl-org/SDL_image#prerelease-3.1.1")
+CPMAddPackage("gh:libsdl-org/SDL_image#release-3.2.0")
 
 # Add SDL Mixer
 set(SDLMIXER_FLAC OFF)
@@ -120,7 +122,7 @@ CPMAddPackage("gh:libsdl-org/SDL_mixer#4870186")
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL_ttf#2822076")
+CPMAddPackage("gh:libsdl-org/SDL_ttf#preview-3.1.0")
 
 ####################################
 # Platform Specific Configuration
