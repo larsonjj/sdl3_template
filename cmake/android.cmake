@@ -1,3 +1,5 @@
+set(CMAKE_USE_PRECOMPILE_HEADERS OFF)
+
 # Set the target name to "main" (SDL's Android code expects libmain.so)
 set(EXECUTABLE_NAME main)
 add_library(${EXECUTABLE_NAME} SHARED ${PROJECT_SOURCES})
