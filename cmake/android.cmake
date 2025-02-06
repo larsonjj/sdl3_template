@@ -1,5 +1,7 @@
 # SDL java JNI interface code is hardcoded to load libmain.so on Android.
-add_library(${EXECUTABLE_NAME} SHARED ${PROJECT_SOURCES})
+add_library(${EXECUTABLE_NAME} SHARED)
+
+target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
 
 # Copy assets for Android.
 add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
