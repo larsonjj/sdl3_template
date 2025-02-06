@@ -1,7 +1,4 @@
-
 # SDL java JNI interface code is hardcoded to load libmain.so on Android.
-# EXECUTABLE_NAME must be set to "main" for Android.
-set(EXECUTABLE_NAME main)
 add_library(${EXECUTABLE_NAME} SHARED ${PROJECT_SOURCES})
 
 # Copy assets for Android.

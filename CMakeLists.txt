@@ -46,8 +46,12 @@ file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/s
 # Package info
 ####################################
 
-# Set the name of the executable
-set(EXECUTABLE_NAME ${PROJECT_NAME})
+if (ANDROID)
+  # Android expects "main" as the executable name
+  set(EXECUTABLE_NAME main)
+else()
+  set(EXECUTABLE_NAME ${PROJECT_NAME})
+endif()
 
 message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
