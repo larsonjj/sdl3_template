@@ -1,3 +1,7 @@
+# Enable Objective-C language for Apple platforms
+# Needed for SDL_Image, SDL_TTF, and SDL_Mixer
+enable_language(OBJC)
+
 # Set the executable name and ensure we use MacOS Bundle
 add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
 
