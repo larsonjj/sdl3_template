@@ -61,9 +61,6 @@ endif()
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 message(STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS})
 
-# Set assets path
-set(SRC_ASSETS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/assets/")
-
 # Author Information for bundling
 set(AUTHOR_NAME "John Doe")
 set(AUTHOR_EMAIL "john.doe@example.com")

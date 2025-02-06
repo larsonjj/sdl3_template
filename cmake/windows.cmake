@@ -21,9 +21,12 @@ if(MSVC)
   endif()
 endif()
 
+# Store source assets path
+set(SRC_ASSETS_PATH "${CMAKE_SOURCE_DIR}/assets")
+
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   # Set the asset path macro to the absolute path on the dev machine and ensure SDL uses callbacks for main
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH=${SRC_ASSETS_PATH})
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH=\"${SRC_ASSETS_PATH}\")
 else()
   # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable and ensure SDL uses callbacks for main
   target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH="./assets/")

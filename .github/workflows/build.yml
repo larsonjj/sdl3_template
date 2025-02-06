@@ -202,7 +202,7 @@ jobs:
       - name: Build the APK
         run: |
           cd build/_deps/sdl-src/android-project/
-          ./gradlew assemble
+          ./gradlew assembleDebug
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
