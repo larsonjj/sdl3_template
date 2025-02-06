@@ -53,6 +53,11 @@ else()
   set(EXECUTABLE_NAME ${PROJECT_NAME})
 endif()
 
+if (APPLE OR EMSCRIPTEN)
+  # Disable shared builds as we want a static binary
+  set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+endif()
+
 message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
 
