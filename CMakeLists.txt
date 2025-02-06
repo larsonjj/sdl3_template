@@ -5,6 +5,12 @@
 # Minimum version of CMake required to build this project
 cmake_minimum_required(VERSION 3.22.1)
 
+if (APPLE)
+  # Build universal binaries on Apple Silicon
+  ## NOTE: This must be set before the project() call
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
+endif()
+
 # Declare the project name, version, description, and languages used.
 project(sdl3_template
   VERSION 0.1.0
@@ -34,10 +40,6 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project
 set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/src")
-
-# Build universal binaries on Apple Silicon
-## NOTE: This must be set before the project() call
-set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
 
 # Define PROJECT_SOURCES as a list of all source files
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
@@ -159,6 +161,8 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Werror>
     $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Werror>
 )
+# Ensure SDL uses main callbacks
+target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
 
 # Link dependencies
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
