@@ -155,17 +155,18 @@ endif()
 # Target Configuration
 ####################################
 
-# Add error checking flags
+# Link dependencies
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
+
+# Add error checking flags (Must be done after linking dependencies)
 target_compile_options(${EXECUTABLE_NAME} PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
     $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Werror>
     $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Werror>
 )
-# Ensure SDL uses main callbacks
-target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
 
-# Link dependencies
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
+# Ensure we use SDL3 main callbacks. (Must be done after linking dependencies)
+target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
