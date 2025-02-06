@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project(sdl3_template
   VERSION 0.1.0
   DESCRIPTION "SDL3 Template"
-  HOMEPAGE_URL "https://github.com/larsonjj/sdl_template"
+  HOMEPAGE_URL "https://github.com/larsonjj/sdl3_template"
   LANGUAGES C CXX
 )
 
@@ -30,11 +30,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 # Disable installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
-
-if (CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "iOS" OR CMAKE_SYSTEM_NAME MATCHES "Emscripten")
-  # Disable shared builds as we want a static binary
-  set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
-endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define PROJECT_INCLUDE to be the path to the include directory of the project

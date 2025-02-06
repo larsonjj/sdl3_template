@@ -16,6 +16,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc")
 if(MSVC)
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${EXECUTABLE_NAME}")
   set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  if(NOT CMAKE_GENERATOR STREQUAL "Ninja")
+      add_definitions(/MP)	# parallelize each build when not using Ninja
+  endif()
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")

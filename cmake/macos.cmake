@@ -2,6 +2,9 @@
 # Needed for SDL_Image, SDL_TTF, and SDL_Mixer
 enable_language(OBJC)
 
+# Disable shared builds as we want a static binary
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+
 # Set the executable name and ensure we use MacOS Bundle
 add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
 
