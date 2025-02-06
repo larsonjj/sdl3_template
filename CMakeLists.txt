@@ -5,12 +5,6 @@
 # Minimum version of CMake required to build this project
 cmake_minimum_required(VERSION 3.22.1)
 
-if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  # Build universal binaries on Apple Silicon MacOS
-  ## NOTE: This must be set before the project() call
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
-endif()
-
 # Declare the project name, version, description, and languages used.
 project(sdl3_template
   VERSION 0.1.0
@@ -38,8 +32,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-# Define PROJECT_INCLUDE to be the path to the include directory of the project
-set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/src")
+
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  # Build universal binaries on Apple Silicon MacOS
+  ## NOTE: This must be set before the project() call
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
+endif()
 
 # Define PROJECT_SOURCES as a list of all source files
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
@@ -60,8 +58,8 @@ if (APPLE OR EMSCRIPTEN)
   set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
 endif()
 
-message( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
-message( STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS} )
+message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
+message(STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS})
 
 # Set assets path
 set(SRC_ASSETS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/assets/")
@@ -155,9 +153,6 @@ endif()
 # Target Configuration
 ####################################
 
-# Link dependencies
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
-
 # Add error checking flags (Must be done after linking dependencies)
 target_compile_options(${EXECUTABLE_NAME} PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
@@ -166,7 +161,10 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE
 )
 
 # Ensure we use SDL3 main callbacks. (Must be done after linking dependencies)
-target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
+target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1)
+
+# Link dependencies
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")

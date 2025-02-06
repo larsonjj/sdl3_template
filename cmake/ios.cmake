@@ -42,7 +42,7 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
 )
 
 # Instruct CMake to only search for static libraries (".a")
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;")
+# set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;")
 
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE
   "-framework Foundation"
@@ -50,6 +50,7 @@ target_link_libraries(${EXECUTABLE_NAME} PRIVATE
   "-framework CoreGraphics"
   "-framework ImageIO"
   "-framework MobileCoreServices"
+  "-framework CoreText"
 )
 
 # Copy assets to the build bundle (Only needed for local builds)

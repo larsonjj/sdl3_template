@@ -11,11 +11,7 @@ add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE)
 # NOTE: ios_launch_screen.storyboard is required for Apple's mobile platforms
 # It describes what to show the user while the application is starting up
 # Referenced inside Info.plist.in
-target_sources(${EXECUTABLE_NAME}
-PRIVATE
-    ${PROJECT_SOURCES}
-    src/ios_launch_screen.storyboard
-)
+target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
 
 # CPack Bundler Configuration
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
