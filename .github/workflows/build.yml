@@ -192,23 +192,24 @@ jobs:
         run: |
           rm -rf build
           mkdir -p build
-          cd build
-          cmake ..
+          mkdir -p build/android
+          cd build/android
+          cmake ../..
 
       - name: Update the build.gradle
         run: |
-          cp src/build.gradle build/_deps/sdl-src/android-project/app/
+          cp src/build.gradle build/android/_deps/sdl-src/android-project/app/
 
       - name: Build the APK
         run: |
-          cd build/_deps/sdl-src/android-project/
+          cd build/android/_deps/sdl-src/android-project/
           ./gradlew assembleDebug
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
-          path: build/_deps/sdl-src/android-project/app/build/outputs/apk/debug/app-*.apk
+          path: build/android/_deps/sdl-src/android-project/app/build/outputs/apk/debug/app-*.apk
   build-web:
     name: Web Build
     runs-on: ubuntu-24.04
