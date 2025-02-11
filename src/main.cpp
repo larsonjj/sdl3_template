@@ -60,7 +60,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
 
 #if __ANDROID__
-    char *basePath = ""; // on Android we do not want to use basepath. Instead, assets are available at the root directory.
+    const char *basePath = ""; // on Android we do not want to use basepath. Instead, assets are available at the root directory.
 #else
     auto basePathPtr = SDL_GetBasePath();
     if (not basePathPtr) {
