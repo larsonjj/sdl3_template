@@ -270,7 +270,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // Initialize bunnies: only 1 bunny initially.
     std::vector<SDL_FRect> bunnies;
     std::mt19937 rng(std::random_device{}());
-    std::uniform_real_distribution<float> speed(-25.0f, 25.0f);
+    std::uniform_real_distribution<float> speed(-50.0f, 50.0f);
     std::uniform_real_distribution<float> x_pos(0.0f, 352.0f);
     std::uniform_real_distribution<float> y_pos(0.0f, 430.0f);
     std::vector<float> bunny_x_speeds;
@@ -316,8 +316,8 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             float mouseX = static_cast<float>(event->button.x * app->pixel_density) - bunnyW / 2;
             float mouseY = static_cast<float>(event->button.y * app->pixel_density) - bunnyH / 2;
 
-            std::uniform_real_distribution<float> speed(-25.0f, 25.0f);
-            for (int i = 0; i < 10; ++i) {
+            std::uniform_real_distribution<float> speed(-50.0f, 50.0f);
+            for (int i = 0; i < 100; ++i) {
                 app->bunnies.push_back({ mouseX, mouseY, bunnyW, bunnyH });
                 app->bunny_x_speeds.push_back(speed(app->rng));
                 app->bunny_y_speeds.push_back(speed(app->rng));
@@ -399,6 +399,38 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = width, .h = height };
     SDL_FRect font_dstrect = { .x = static_cast<float>(margin), .y = static_cast<float>(rendererHeight - height - margin), .w = width, .h = height };
     SDL_RenderTexture(app->renderer, app->font_texture, &font_srcrect, &font_dstrect);
+
+    // Render bunny count text at the top left.
+    {
+        static Uint32 lastBunnyUpdate = SDL_GetTicks();
+        static SDL_Texture *bunnyCountTexture = nullptr;
+        Uint32 currentTime = SDL_GetTicks();
+        if (currentTime - lastBunnyUpdate >= 1000) {
+            lastBunnyUpdate = currentTime;
+            char bunnyText[32];
+            SDL_snprintf(bunnyText, sizeof(bunnyText), "Bunnies: %d", static_cast<int>(app->bunnies.size()));
+            SDL_Color black = { 0, 0, 0, 255 };
+            SDL_Surface *bunnySurface = TTF_RenderText_Blended(app->font, bunnyText, static_cast<int>(strlen(bunnyText)), black);
+            if (bunnySurface) {
+                SDL_Texture *newTexture = SDL_CreateTextureFromSurface(app->renderer, bunnySurface);
+                SDL_DestroySurface(bunnySurface);
+                if (newTexture) {
+                    if (bunnyCountTexture) {
+                        SDL_DestroyTexture(bunnyCountTexture);
+                    }
+                    bunnyCountTexture = newTexture;
+                }
+            }
+        }
+        if (bunnyCountTexture) {
+            float txtW, txtH;
+            SDL_GetTextureSize(bunnyCountTexture, &txtW, &txtH);
+            int margin = 16 * app->pixel_density;
+            SDL_FRect srcRect = { 0, 0, txtW, txtH };
+            SDL_FRect dstRect = { static_cast<float>(margin), static_cast<float>(margin), txtW, txtH };
+            SDL_RenderTexture(app->renderer, bunnyCountTexture, &srcRect, &dstRect);
+        }
+    }
 
     SDL_RenderPresent(app->renderer);
     return app->app_quit;
