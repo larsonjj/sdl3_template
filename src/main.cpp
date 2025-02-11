@@ -109,6 +109,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_Fail();
     }
 
+    // Enable vysnc
+    SDL_SetRenderVSync(renderer, -1);
+
     // print some information about the window
     SDL_ShowWindow(window);
     {
