@@ -4,8 +4,8 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include <vector>
 #include <random>
+#include <vector>
 
 static int audio_open = 0;
 static Mix_Music *music = NULL;
@@ -88,13 +88,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!Mix_OpenAudio(0, &spec)) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         return SDL_Fail();
-    }
-    else {
+    } else {
         Mix_QuerySpec(&spec.freq, &spec.format, &spec.channels);
         SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq,
                 (spec.format & 0xFF),
                 (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
-                (spec.channels > 2) ? "surround" : (spec.channels > 1) ? "stereo" : "mono");
+                (spec.channels > 2) ? "surround" : (spec.channels > 1) ? "stereo"
+                                                                       : "mono");
         if (loops) {
             SDL_Log(" (looping)\n");
         }
@@ -192,69 +192,69 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     char message[] = "FPS: 60";
     char string[7];
     switch (rendermethod) {
-        case TextRenderSolid:
-            text = TTF_RenderText_Solid(font, string, sizeof(string), *forecol);
-            break;
-        case TextRenderShaded:
-            text = TTF_RenderText_Shaded(font, string, sizeof(string), *forecol, *backcol);
-            break;
-        case TextRenderBlended:
-            text = TTF_RenderText_Blended(font, string, sizeof(string), *forecol);
-            break;
+    case TextRenderSolid:
+        text = TTF_RenderText_Solid(font, string, sizeof(string), *forecol);
+        break;
+    case TextRenderShaded:
+        text = TTF_RenderText_Shaded(font, string, sizeof(string), *forecol, *backcol);
+        break;
+    case TextRenderBlended:
+        text = TTF_RenderText_Blended(font, string, sizeof(string), *forecol);
+        break;
     }
 
     switch (rendertype) {
-        case RENDER_LATIN1:
-            switch (rendermethod) {
-                case TextRenderSolid:
-                    if (wrap) {
-                        text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
-                    } else {
-                        text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
-                    }
-                    break;
-                case TextRenderShaded:
-                    if (wrap) {
-                        text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
-                    } else {
-                        text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
-                    }
-                    break;
-                case TextRenderBlended:
-                    if (wrap) {
-                        text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
-                    } else {
-                        text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
-                    }
-                    break;
+    case RENDER_LATIN1:
+        switch (rendermethod) {
+        case TextRenderSolid:
+            if (wrap) {
+                text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
             }
             break;
+        case TextRenderShaded:
+            if (wrap) {
+                text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
+            } else {
+                text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
+            }
+            break;
+        case TextRenderBlended:
+            if (wrap) {
+                text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
+            }
+            break;
+        }
+        break;
 
-        case RENDER_UTF8:
-            switch (rendermethod) {
-                case TextRenderSolid:
-                    if (wrap) {
-                        text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
-                    } else {
-                        text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
-                    }
-                    break;
-                case TextRenderShaded:
-                    if (wrap) {
-                        text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
-                    } else {
-                        text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
-                    }
-                    break;
-                case TextRenderBlended:
-                    if (wrap) {
-                        text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
-                    } else {
-                        text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
-                    }
-                    break;
+    case RENDER_UTF8:
+        switch (rendermethod) {
+        case TextRenderSolid:
+            if (wrap) {
+                text = TTF_RenderText_Solid_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Solid(font, message, sizeof(string), *forecol);
             }
             break;
+        case TextRenderShaded:
+            if (wrap) {
+                text = TTF_RenderText_Shaded_Wrapped(font, message, sizeof(string), *forecol, *backcol, 0);
+            } else {
+                text = TTF_RenderText_Shaded(font, message, sizeof(string), *forecol, *backcol);
+            }
+            break;
+        case TextRenderBlended:
+            if (wrap) {
+                text = TTF_RenderText_Blended_Wrapped(font, message, sizeof(string), *forecol, 0);
+            } else {
+                text = TTF_RenderText_Blended(font, message, sizeof(string), *forecol);
+            }
+            break;
+        }
+        break;
     }
 
     if (text == NULL) {
@@ -276,7 +276,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     std::vector<float> bunny_x_speeds;
     std::vector<float> bunny_y_speeds;
 
-    bunnies.push_back({x_pos(rng), y_pos(rng), 26 * pixel_density, 37 * pixel_density});
+    bunnies.push_back({ x_pos(rng), y_pos(rng), 26 * pixel_density, 37 * pixel_density });
     bunny_x_speeds.push_back(speed(rng));
     bunny_y_speeds.push_back(speed(rng));
 
@@ -292,7 +292,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         rng,
         bunny_x_speeds,
         bunny_y_speeds,
-        font  // Store the font pointer for later FPS updates.
+        font // Store the font pointer for later FPS updates.
     };
 
     Mix_PlayMusic(music, loops);
@@ -309,11 +309,16 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
     if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
         if (event->button.button == SDL_BUTTON_LEFT) { // Process only left mouse clicks
-            float mouseX = static_cast<float>(event->button.x);
-            float mouseY = static_cast<float>(event->button.y);
+            // Compute bunny dimensions
+            float bunnyW = 26 * app->pixel_density;
+            float bunnyH = 37 * app->pixel_density;
+            // Offset the mouse coordinate so the bunny is centered on the click
+            float mouseX = static_cast<float>(event->button.x * app->pixel_density) - bunnyW / 2;
+            float mouseY = static_cast<float>(event->button.y * app->pixel_density) - bunnyH / 2;
+
             std::uniform_real_distribution<float> speed(-25.0f, 25.0f);
             for (int i = 0; i < 10; ++i) {
-                app->bunnies.push_back({mouseX, mouseY, 26 * app->pixel_density, 37 * app->pixel_density});
+                app->bunnies.push_back({ mouseX, mouseY, bunnyW, bunnyH });
                 app->bunny_x_speeds.push_back(speed(app->rng));
                 app->bunny_y_speeds.push_back(speed(app->rng));
             }
@@ -344,7 +349,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     prevTime = currentTime;
 
     // Update bunny positions using the computed deltaTime.
-        for (size_t i = 0; i < app->bunnies.size(); ++i) {
+    for (size_t i = 0; i < app->bunnies.size(); ++i) {
         app->bunnies[i].x += app->bunny_x_speeds[i] * deltaTime;
         app->bunnies[i].y += app->bunny_y_speeds[i] * deltaTime;
 
@@ -373,8 +378,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
             lastTime = currentTime;
             char fpsText[32];
             SDL_snprintf(fpsText, sizeof(fpsText), "FPS: %d", fps);
-            SDL_Color fpsColor = { 0, 0, 0, 255 };  // Black color.
-// Pass the actual length of the string instead of sizeof(fpsText).
+            SDL_Color fpsColor = { 0, 0, 0, 255 }; // Black color.
+                                                   // Pass the actual length of the string instead of sizeof(fpsText).
             SDL_Surface *fpsSurface = TTF_RenderText_Blended(app->font, fpsText, static_cast<int>(strlen(fpsText)), fpsColor);
             if (fpsSurface) {
                 SDL_Texture *newFontTexture = SDL_CreateTextureFromSurface(app->renderer, fpsSurface);
