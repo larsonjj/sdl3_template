@@ -14,6 +14,7 @@ struct AppContext
     SDL_Texture *texture;
     SDL_Texture *font_texture;
     Mix_Music *music;
+    float pixel_density;
     SDL_AppResult app_quit = SDL_APP_CONTINUE;
 };
 
@@ -58,6 +59,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (not renderer) {
         return SDL_Fail();
     }
+
+    float pixel_density = SDL_GetWindowPixelDensity(window);
 
 #if __ANDROID__
     const char *basePath = ""; // on Android we do not want to use basepath. Instead, assets are available at the root directory.
@@ -114,6 +117,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         SDL_GetWindowSizeInPixels(window, &bbwidth, &bbheight);
         SDL_Log("Window size: %ix%i", width, height);
         SDL_Log("Backbuffer size: %ix%i", bbwidth, bbheight);
+        SDL_Log("Device pixel ratio: %f", SDL_GetWindowPixelDensity(window));
         if (width != bbwidth) {
             SDL_Log("This is a highdpi environment.");
         }
@@ -159,7 +163,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Color black = { 0x00, 0x00, 0x00, 0 };
     SDL_Color *forecol;
     SDL_Color *backcol;
-    float ptsize = 32;
+    float ptsize = 32 * pixel_density;
     TextRenderMethod rendermethod = TextRenderSolid;
     int renderstyle = TTF_STYLE_NORMAL;
     int rendertype = RENDER_LATIN1;
@@ -273,7 +277,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         renderer,
         texture,
         font_texture,
-        music
+        music,
+        pixel_density
     };
 
     Mix_PlayMusic(music, loops);
@@ -296,14 +301,14 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 {
     auto *app = static_cast<AppContext *>(appstate);
 
-    // draw a color
-    auto time = SDL_GetTicks() / 1000.f;
-    auto red = (SDL_sin(time) + 1) / 2.0 * 255;
-    auto green = (SDL_sin(time / 2) + 1) / 2.0 * 255;
-    auto blue = (SDL_sin(time) * 2 + 1) / 2.0 * 255;
-
+    // Draw white background
+    auto red = 255;
+    auto green = 255;
+    auto blue = 255;
     SDL_SetRenderDrawColor(app->renderer, static_cast<uint8_t>(red), static_cast<uint8_t>(green), static_cast<uint8_t>(blue), SDL_ALPHA_OPAQUE);
+
     SDL_RenderClear(app->renderer);
+
     // Update the screen
     // Get Renderer height and width
     int rendererWidth, rendererHeight;
@@ -311,10 +316,10 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     float width;
     float height;
-    int margin = 16;
+    int margin = 16 * app->pixel_density;
     SDL_GetTextureSize(app->font_texture, &width, &height);
     SDL_FRect bunny_srcrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
-    SDL_FRect bunny_dstrect = { .x = 0, .y = 0, .w = 26, .h = 37 };
+    SDL_FRect bunny_dstrect = { .x = static_cast<float>(margin), .y = static_cast<float>(margin), .w = 26 * app->pixel_density, .h = 37 * app->pixel_density };
     SDL_FRect font_srcrect = { .x = 0, .y = 0, .w = static_cast<float>(width), .h = static_cast<float>(height) };
     SDL_FRect font_dstrect = { .x = static_cast<float>(margin), .y = static_cast<float>(rendererHeight - height - margin), .w = static_cast<float>(width), .h = static_cast<float>(height) };
     SDL_RenderTexture(app->renderer, app->font_texture, &font_srcrect, &font_dstrect);
