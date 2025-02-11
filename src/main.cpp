@@ -4,7 +4,6 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include <cmath>
 
 static int audio_open = 0;
 static Mix_Music *music = NULL;
@@ -60,6 +59,18 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_Fail();
     }
 
+#if __ANDROID__
+    char *basePath = ""; // on Android we do not want to use basepath. Instead, assets are available at the root directory.
+#else
+    auto basePathPtr = SDL_GetBasePath();
+    if (not basePathPtr) {
+        return SDL_Fail();
+    }
+    char assets_path[512];
+    SDL_snprintf(assets_path, sizeof(assets_path), "%s%s", basePathPtr, "assets/");
+    const char *basePath = assets_path;
+#endif
+
     SDL_AudioSpec spec;
     int loops = -1; // Infinite
     spec.freq = MIX_DEFAULT_FREQUENCY;
@@ -83,8 +94,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
     audio_open = 1;
 
-    const char *bg_music_asset_filepath = "assets/background.mp3";
-    const char *root_filepath = SDL_GetBasePath();
+    const char *bg_music_asset_filepath = "background.mp3";
+    const char *root_filepath = basePath;
     char combined_path[512];
     SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bg_music_asset_filepath);
 
@@ -114,7 +125,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Surface *temp = NULL;
     SDL_Texture *texture = NULL;
     float w, h;
-    const char *bunny_asset_filepath = "assets/bunny.png";
+    const char *bunny_asset_filepath = "bunny.png";
     // Clear our combined path buffer
     memset(combined_path, 0, sizeof(combined_path));
     SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bunny_asset_filepath);
@@ -161,7 +172,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     int wrap = 0;
 
     // Clear our combined path buffer
-    const char *font_asset_filepath = "assets/monogram.ttf";
+    const char *font_asset_filepath = "monogram.ttf";
     memset(combined_path, 0, sizeof(combined_path));
     SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, font_asset_filepath);
 
@@ -287,9 +298,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     // draw a color
     auto time = SDL_GetTicks() / 1000.f;
-    auto red = (std::sin(time) + 1) / 2.0 * 255;
-    auto green = (std::sin(time / 2) + 1) / 2.0 * 255;
-    auto blue = (std::sin(time) * 2 + 1) / 2.0 * 255;
+    auto red = (SDL_sin(time) + 1) / 2.0 * 255;
+    auto green = (SDL_sin(time / 2) + 1) / 2.0 * 255;
+    auto blue = (SDL_sin(time) * 2 + 1) / 2.0 * 255;
 
     SDL_SetRenderDrawColor(app->renderer, static_cast<uint8_t>(red), static_cast<uint8_t>(green), static_cast<uint8_t>(blue), SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
