@@ -45,8 +45,11 @@ android {
             cmake {
                 path "../../../../../../CMakeLists.txt"
                 version "3.22.1"
-                arguments "-DCMAKE_C_STANDARD=99", "-DCMAKE_VERBOSE_MAKEFILE=ON",
-                "-DMOBILE_ASSETS_DIR=${System.getProperty("user.dir")}/app/src/main/assets"
+                arguments = [
+                    "-DCMAKE_C_STANDARD=99",
+                    "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                    "-DMOBILE_ASSETS_DIR=${System.getProperty("user.dir")}/app/src/main/assets"
+                ]
             }
         }
 
