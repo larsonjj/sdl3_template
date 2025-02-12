@@ -48,14 +48,18 @@ static void BunnyArrayPush(AppContext* app, SDL_FRect rect, float x_speed, float
 }
 
 // Return a random float in [min, max].
-static float random_float(float min, float max) { return min + ((float)rand() / (float)RAND_MAX) * (max - min); }
+static float random_float(float min, float max)
+{
+  return min + ((float)rand() / (float)RAND_MAX) * (max - min);
+}
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
   if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
     return SDL_AppFail();
   }
-  SDL_Window* window = SDL_CreateWindow("Window", 352, 430, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+  SDL_Window* window =
+      SDL_CreateWindow("Window", 352, 430, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
   if (!window) {
     return SDL_AppFail();
   }
@@ -261,7 +265,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     char fpsText[32];
     SDL_snprintf(fpsText, sizeof(fpsText), "FPS: %d", fps);
     SDL_Color fpsColor = {0, 0, 0, 255};
-    SDL_Surface* fpsSurface = TTF_RenderText_Blended(app->font, fpsText, SDL_strlen(fpsText), fpsColor);
+    SDL_Surface* fpsSurface =
+        TTF_RenderText_Blended(app->font, fpsText, SDL_strlen(fpsText), fpsColor);
     if (fpsSurface) {
       SDL_Texture* newFontTexture = SDL_CreateTextureFromSurface(app->renderer, fpsSurface);
       SDL_DestroySurface(fpsSurface);
@@ -286,7 +291,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     char bunnyText[32];
     SDL_snprintf(bunnyText, sizeof(bunnyText), "Bunnies: %d", (int)app->bunny_count);
     SDL_Color black = {0, 0, 0, 255};
-    SDL_Surface* bunnySurface = TTF_RenderText_Blended(app->font, bunnyText, SDL_strlen(bunnyText), black);
+    SDL_Surface* bunnySurface =
+        TTF_RenderText_Blended(app->font, bunnyText, SDL_strlen(bunnyText), black);
     if (bunnySurface) {
       SDL_Texture* newTexture = SDL_CreateTextureFromSurface(app->renderer, bunnySurface);
       SDL_DestroySurface(bunnySurface);

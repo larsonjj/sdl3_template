@@ -1,7 +1,7 @@
 BasedOnStyle: LLVM
 IndentWidth: 2
 TabWidth: 2
-ColumnLimit: 120
+ColumnLimit: 100
 BreakBeforeBraces: Linux # Use Linux brace style (or choose Allman if you prefer)
 PointerAlignment: Left # Place pointer stars with the variable name
 DerivePointerAlignment: false # Do not adjust pointer alignment automatically

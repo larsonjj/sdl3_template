@@ -90,7 +90,6 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-# CPMAddPackage("gh:libsdl-org/SDL#release-3.2.2")
 CPMAddPackage(
   NAME SDL
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
@@ -117,7 +116,6 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-# CPMAddPackage("gh:libsdl-org/SDL_image#release-3.2.0")
 CPMAddPackage(
   NAME SDL_image
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
@@ -131,7 +129,6 @@ set(SDLMIXER_GME OFF)
 set(SDLMIXER_MOD OFF)
 set(SDLMIXER_MIDI OFF)
 set(SDLMIXER_OPUS OFF)
-# CPMAddPackage("gh:libsdl-org/SDL_mixer#4870186")
 CPMAddPackage(
   NAME SDL_mixer
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
@@ -141,7 +138,6 @@ CPMAddPackage(
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-# CPMAddPackage("gh:libsdl-org/SDL_ttf#preview-3.1.0")
 CPMAddPackage(
   NAME SDL_ttf
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
