@@ -10,16 +10,16 @@ project(sdl3_template
   VERSION 0.1.0
   DESCRIPTION "SDL3 Template"
   HOMEPAGE_URL "https://github.com/larsonjj/sdl3_template"
-  LANGUAGES C CXX
+  LANGUAGES C
 )
 
 # Add CPM dependency
 include(cmake/CPM.cmake)
 
-# Set CPP standard to 20 and disable extensions
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+# Set C standard to c99
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 # Export compile commands for use with clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -40,7 +40,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 endif()
 
 # Define PROJECT_SOURCES as a list of all source files
-file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
+file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.c")
 
 ####################################
 # Package info
@@ -90,7 +90,13 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL#release-3.2.2")
+# CPMAddPackage("gh:libsdl-org/SDL#release-3.2.2")
+CPMAddPackage(
+  NAME SDL
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+  GIT_TAG release-3.2.2
+  EXCLUDE_FROM_ALL YES
+)
 
 # Add SDL Image
 set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
@@ -111,7 +117,13 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-CPMAddPackage("gh:libsdl-org/SDL_image#release-3.2.0")
+# CPMAddPackage("gh:libsdl-org/SDL_image#release-3.2.0")
+CPMAddPackage(
+  NAME SDL_image
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+  GIT_TAG release-3.2.0
+  EXCLUDE_FROM_ALL YES
+)
 
 # Add SDL Mixer
 set(SDLMIXER_FLAC OFF)
@@ -119,11 +131,23 @@ set(SDLMIXER_GME OFF)
 set(SDLMIXER_MOD OFF)
 set(SDLMIXER_MIDI OFF)
 set(SDLMIXER_OPUS OFF)
-CPMAddPackage("gh:libsdl-org/SDL_mixer#4870186")
+# CPMAddPackage("gh:libsdl-org/SDL_mixer#4870186")
+CPMAddPackage(
+  NAME SDL_mixer
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+  GIT_TAG 4870186
+  EXCLUDE_FROM_ALL YES
+)
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL_ttf#preview-3.1.0")
+# CPMAddPackage("gh:libsdl-org/SDL_ttf#preview-3.1.0")
+CPMAddPackage(
+  NAME SDL_ttf
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+  GIT_TAG preview-3.1.0
+  EXCLUDE_FROM_ALL YES
+)
 
 ####################################
 # Platform Specific Configuration
@@ -150,11 +174,13 @@ endif()
 # Target Configuration
 ####################################
 
-# Add error checking flags (Must be done after linking dependencies)
+# Add error checking flags for C (after linking dependencies)
 target_compile_options(${EXECUTABLE_NAME} PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
-    $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Werror>
-    $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Werror>
+    $<$<COMPILE_LANGUAGE:C>:
+        $<$<C_COMPILER_ID:MSVC>:/W4 /WX>
+        $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Werror>
+        $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Werror>
+    >
 )
 
 # Ensure we use SDL3 main callbacks. (Must be done after linking dependencies)
@@ -163,6 +189,7 @@ target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1)
 # Link dependencies
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
 
+# Use only C flags for Debug builds
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
-  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -DDEBUG")
 endif()
