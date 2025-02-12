@@ -211,7 +211,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             float bunnyH = 37 * app->pixel_density;
             float mouseX = (float)event->button.x * app->pixel_density - bunnyW / 2;
             float mouseY = (float)event->button.y * app->pixel_density - bunnyH / 2;
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 1000; i++) {
                 SDL_FRect r = {mouseX, mouseY, bunnyW, bunnyH};
                 float xs = random_float(-50.0f, 50.0f);
                 float ys = random_float(-50.0f, 50.0f);
