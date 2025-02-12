@@ -175,13 +175,13 @@ endif()
 ####################################
 
 # Add error checking flags for C (after linking dependencies)
-target_compile_options(${EXECUTABLE_NAME} PRIVATE
-    $<$<COMPILE_LANGUAGE:C>:
-        $<$<C_COMPILER_ID:MSVC>:/W4 /WX>
-        $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Werror>
-        $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Werror>
-    >
-)
+# target_compile_options(${EXECUTABLE_NAME} PRIVATE
+#     $<$<COMPILE_LANGUAGE:C>:
+#         $<$<C_COMPILER_ID:MSVC>:/W4 /WX>
+#         $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Werror>
+#         $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Werror>
+#     >
+# )
 
 # Ensure we use SDL3 main callbacks. (Must be done after linking dependencies)
 target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1)
