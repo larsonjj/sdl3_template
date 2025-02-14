@@ -37,9 +37,27 @@ static void BunnyArrayPush(AppContext *app, SDL_FRect rect, float x_speed, float
 {
     if (app->bunny_count >= app->bunny_capacity) {
         app->bunny_capacity *= 2;
-        app->bunnies = realloc(app->bunnies, app->bunny_capacity * sizeof(SDL_FRect));
-        app->bunny_x_speeds = realloc(app->bunny_x_speeds, app->bunny_capacity * sizeof(float));
-        app->bunny_y_speeds = realloc(app->bunny_y_speeds, app->bunny_capacity * sizeof(float));
+
+        SDL_FRect *tmpBunnies = realloc(app->bunnies, app->bunny_capacity * sizeof(SDL_FRect));
+        if (!tmpBunnies) {
+            SDL_Log("Memory reallocation failed for bunnies");
+            return;
+        }
+        app->bunnies = tmpBunnies;
+
+        float *tmpBunnyX = realloc(app->bunny_x_speeds, app->bunny_capacity * sizeof(float));
+        if (!tmpBunnyX) {
+            SDL_Log("Memory reallocation failed for bunny_x_speeds");
+            return;
+        }
+        app->bunny_x_speeds = tmpBunnyX;
+
+        float *tmpBunnyY = realloc(app->bunny_y_speeds, app->bunny_capacity * sizeof(float));
+        if (!tmpBunnyY) {
+            SDL_Log("Memory reallocation failed for bunny_y_speeds");
+            return;
+        }
+        app->bunny_y_speeds = tmpBunnyY;
     }
     app->bunnies[app->bunny_count] = rect;
     app->bunny_x_speeds[app->bunny_count] = x_speed;
@@ -55,6 +73,8 @@ static float random_float(float min, float max)
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
+    (void)argc;
+    (void)argv;
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
         return SDL_AppFail();
     }
