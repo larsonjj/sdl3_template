@@ -80,6 +80,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
         return SDL_AppFail();
     }
+
+    // Initialize SDL_mixer
+    if (!MIX_Init()) {
+        SDL_Log("Couldn't initialize mixer: %s\n", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
     SDL_Window *window =
         SDL_CreateWindow("Window", 352, 430, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     if (!window) {
@@ -109,20 +116,18 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     spec.format = SDL_AUDIO_S16;
     spec.channels = 2;
 
-    MIX_Mixer *mixer = MIX_CreateMixerDevice(0, &spec);
+    MIX_Mixer *mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
     if (!mixer) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
-        return SDL_APP_FAILURE; // Changed from SDL_Fail()
+        return SDL_AppFail();
     } else {
-        MIX_GetMixerFormat(mixer, &spec); // Added mixer parameter
+        MIX_GetMixerFormat(mixer, &spec);
         SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq, (spec.format & 0xFF),
                 (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
                 (spec.channels > 2)   ? "surround"
                 : (spec.channels > 1) ? "stereo"
                                       : "mono");
-        // Removed loops check - undefined variable
     }
-    // Removed audio_open assignment - undefined variable
 
     // Load background music.
     char combined_path[512];
@@ -131,7 +136,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     MIX_Audio *music = MIX_LoadAudio(mixer, combined_path, false); // Changed to local variable
     if (music == NULL) {
         SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
-        return SDL_APP_FAILURE; // Changed from SDL_Fail()
+        return SDL_AppFail();
     }
 
     SDL_ShowWindow(window);
@@ -229,7 +234,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // Play the music with infinite loop
     MIX_PlayAudio(mixer, music);
     *appstate = app;
-    return SDL_APP_SUCCESS; // Changed from 0
+    return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
@@ -252,7 +257,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             }
         }
     }
-    return 0;
+    return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate)
@@ -346,7 +351,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     }
 
     SDL_RenderPresent(app->renderer);
-    return app->app_quit;
+    return app->app_quit ? SDL_APP_SUCCESS : SDL_APP_CONTINUE;
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
@@ -371,6 +376,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
         free(app);
     }
     TTF_Quit();
+    MIX_Quit();
     SDL_Quit();
     SDL_Log("Application quit successfully!");
 }
