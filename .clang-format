@@ -1,8 +1,8 @@
 ---
-AlignConsecutiveMacros: Consecutive
-AlignConsecutiveAssignments: None
-AlignConsecutiveBitFields: None
-AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveBitFields: false
+AlignConsecutiveDeclarations: false
 AlignEscapedNewlines: Right
 AlignOperands: Align
 AlignTrailingComments: true
@@ -68,9 +68,7 @@ SpacesInCStyleCastParentheses: false
 SpacesInConditionalStatement: false
 SpacesInContainerLiterals: true
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeCaseColon: false
 SpaceBeforeParens: ControlStatements
-SpaceAroundPointerQualifiers: Default
 SpaceInEmptyBlock: false
 SpaceInEmptyParentheses: false
 
@@ -88,4 +86,3 @@ ForEachMacros:
   ]
 
 ---
-

@@ -8,7 +8,7 @@
 #include <vector>
 
 static int audio_open = 0;
-static Mix_Music *music = NULL;
+static MIX_Audio *music = NULL;
 
 struct AppContext
 {
@@ -16,7 +16,7 @@ struct AppContext
     SDL_Renderer *renderer;
     SDL_Texture *bunny_texture;
     SDL_Texture *font_texture; // Texture used for the FPS text.
-    Mix_Music *music;
+    MIX_Audio *music;
     float pixel_density;
     SDL_AppResult app_quit = SDL_APP_CONTINUE;
     std::vector<SDL_FRect> bunnies;
@@ -81,15 +81,15 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     SDL_AudioSpec spec;
     int loops = -1; // Infinite
-    spec.freq = MIX_DEFAULT_FREQUENCY;
-    spec.format = MIX_DEFAULT_FORMAT;
-    spec.channels = MIX_DEFAULT_CHANNELS;
+    spec.freq = 44100;
+    spec.format = SDL_AUDIO_S16;
+    spec.channels = 2;
 
-    if (!Mix_OpenAudio(0, &spec)) {
+    if (!MIX_CreateMixerDevice(0, &spec)) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         return SDL_Fail();
     } else {
-        Mix_QuerySpec(&spec.freq, &spec.format, &spec.channels);
+        MIX_GetMixerFormat(&spec.freq, &spec.format, &spec.channels);
         SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq,
                 (spec.format & 0xFF),
                 (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
@@ -106,7 +106,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     char combined_path[512];
     SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bg_music_asset_filepath);
 
-    music = Mix_LoadMUS(combined_path);
+    music = MIX_LoadAudio(combined_path);
     if (music == NULL) {
         SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
         return SDL_Fail();
@@ -295,7 +295,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         font // Store the font pointer for later FPS updates.
     };
 
-    Mix_PlayMusic(music, loops);
+    MIX_PlayAudio(MIX_GetDefaultPlaybackDevice(), music);
     return SDL_APP_CONTINUE;
 }
 
@@ -442,7 +442,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     if (appstate != NULL) {
         auto *app = static_cast<AppContext *>(appstate);
         if (app) {
-            Mix_FreeMusic(app->music);
+            MIX_DestroyAudio(app->music);
             SDL_DestroyTexture(app->bunny_texture);
             SDL_DestroyTexture(app->font_texture);
             SDL_DestroyRenderer(app->renderer);

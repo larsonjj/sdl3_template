@@ -90,7 +90,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${AUTHOR_NAME})
 set(SDL_DIALOG OFF CACHE BOOL "" FORCE)
 set(SDL_CAMERA OFF CACHE BOOL "" FORCE)
 set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL#release-3.2.2")
+CPMAddPackage("gh:libsdl-org/SDL#release-3.4.0")
 
 # Add SDL Image
 set(SDLIMAGE_INSTALL OFF) # disable install target for SDL Image
@@ -111,7 +111,7 @@ set(SDLIMAGE_WEBP ON)
 set(SDLIMAGE_XCF OFF)
 set(SDLIMAGE_XPM OFF)
 set(SDLIMAGE_XV OFF)
-CPMAddPackage("gh:libsdl-org/SDL_image#release-3.2.0")
+CPMAddPackage("gh:libsdl-org/SDL_image#release-3.4.0")
 
 # Add SDL Mixer
 set(SDLMIXER_FLAC OFF)
@@ -119,11 +119,11 @@ set(SDLMIXER_GME OFF)
 set(SDLMIXER_MOD OFF)
 set(SDLMIXER_MIDI OFF)
 set(SDLMIXER_OPUS OFF)
-CPMAddPackage("gh:libsdl-org/SDL_mixer#4870186")
+CPMAddPackage("gh:libsdl-org/SDL_mixer#prerelease-3.1.2")
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-CPMAddPackage("gh:libsdl-org/SDL_ttf#preview-3.1.0")
+CPMAddPackage("gh:libsdl-org/SDL_ttf#release-3.2.2")
 
 ####################################
 # Platform Specific Configuration
