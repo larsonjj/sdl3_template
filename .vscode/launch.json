@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "configurations": [
     {
-      "name": "Launch",
+      "name": "Launch Debug (GDB)",
       "type": "lldb",
       "request": "launch",
       "program": "${command:cmake.launchTargetPath}",
@@ -40,6 +40,22 @@
           }
         ]
       }
+    },
+    {
+      "name": "Launch Debug (MSVC)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "PATH",
+          "value": "${env:PATH};${command:cmake.getLaunchTargetDirectory}"
+        }
+      ],
+      "console": "internalConsole",
+      "stopAtEntry": false
     }
   ]
 }
