@@ -28,5 +28,13 @@
     "preferredGenerator": {
       "name": "Ninja"
     }
+  },
+  {
+    "name": "win32-msvc",
+    "visualStudio": "17",
+    "visualStudioArchitecture": "amd64",
+    "preferredGenerator": {
+      "name": "Visual Studio 17 2022"
+    }
   }
 ]

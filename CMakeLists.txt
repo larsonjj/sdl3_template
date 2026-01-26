@@ -96,7 +96,7 @@ set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 CPMAddPackage(
   NAME SDL
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG release-3.2.2
+  GIT_TAG release-3.4.0
   EXCLUDE_FROM_ALL YES
 )
 
@@ -122,7 +122,7 @@ set(SDLIMAGE_XV OFF)
 CPMAddPackage(
   NAME SDL_image
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-  GIT_TAG release-3.2.0
+  GIT_TAG release-3.4.0
   EXCLUDE_FROM_ALL YES
 )
 
@@ -135,16 +135,17 @@ set(SDLMIXER_OPUS OFF)
 CPMAddPackage(
   NAME SDL_mixer
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
-  GIT_TAG 4870186
+  GIT_TAG prerelease-3.1.2
   EXCLUDE_FROM_ALL YES
 )
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
+set(SDLTTF_HARFBUZZ OFF CACHE BOOL "" FORCE)
 CPMAddPackage(
   NAME SDL_ttf
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-  GIT_TAG preview-3.1.0
+  GIT_TAG release-3.2.2
   EXCLUDE_FROM_ALL YES
 )
 
@@ -186,7 +187,7 @@ endif()
 target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1)
 
 # Link dependencies
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf stdc++)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
 
 # Use only C flags for Debug builds
 if (CMAKE_BUILD_TYPE MATCHES "Debug")

@@ -16,7 +16,8 @@ typedef struct {
     SDL_Renderer *renderer;
     SDL_Texture *bunny_texture;
     SDL_Texture *font_texture;
-    Mix_Music *music;
+    MIX_Audio *music;
+    MIX_Mixer *mixer; // Add mixer to app context
     float pixel_density;
     int app_quit;
     // Dynamic arrays for bunnies and speed values.
@@ -104,24 +105,33 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // Initialize audio.
     SDL_AudioSpec spec;
-    spec.freq = MIX_DEFAULT_FREQUENCY;
-    spec.format = MIX_DEFAULT_FORMAT;
-    spec.channels = MIX_DEFAULT_CHANNELS;
-    if (!Mix_OpenAudio(0, &spec)) {
+    spec.freq = 44100;
+    spec.format = SDL_AUDIO_S16;
+    spec.channels = 2;
+
+    MIX_Mixer *mixer = MIX_CreateMixerDevice(0, &spec);
+    if (!mixer) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
-        return SDL_AppFail();
+        return SDL_APP_FAILURE; // Changed from SDL_Fail()
+    } else {
+        MIX_GetMixerFormat(mixer, &spec); // Added mixer parameter
+        SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq, (spec.format & 0xFF),
+                (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
+                (spec.channels > 2)   ? "surround"
+                : (spec.channels > 1) ? "stereo"
+                                      : "mono");
+        // Removed loops check - undefined variable
     }
-    int loops = -1;
-    Mix_QuerySpec(&spec.freq, &spec.format, &spec.channels);
-    SDL_Log("Opened audio at %d Hz", spec.freq);
+    // Removed audio_open assignment - undefined variable
 
     // Load background music.
     char combined_path[512];
     SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", basePath, "background.mp3");
-    Mix_Music *music = Mix_LoadMUS(combined_path);
-    if (!music) {
+
+    MIX_Audio *music = MIX_LoadAudio(mixer, combined_path, false); // Changed to local variable
+    if (music == NULL) {
         SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
-        return SDL_AppFail();
+        return SDL_APP_FAILURE; // Changed from SDL_Fail()
     }
 
     SDL_ShowWindow(window);
@@ -206,6 +216,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     app->bunny_texture = bunny_texture;
     app->font_texture = font_texture;
     app->music = music;
+    app->mixer = mixer; // Store mixer in app context
     app->pixel_density = pixel_density;
     app->app_quit = 0;
     app->bunnies = bunnies;
@@ -215,9 +226,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     app->bunny_y_speeds = bunny_y_speeds;
     app->font = font;
 
-    Mix_PlayMusic(music, loops);
+    // Play the music with infinite loop
+    MIX_PlayAudio(mixer, music);
     *appstate = app;
-    return 0;
+    return SDL_APP_SUCCESS; // Changed from 0
 }
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
@@ -342,7 +354,12 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     (void)result;
     AppContext *app = (AppContext *)appstate;
     if (app) {
-        Mix_FreeMusic(app->music);
+        if (app->music) {
+            MIX_DestroyAudio(app->music);
+        }
+        if (app->mixer) {
+            MIX_DestroyMixer(app->mixer); // Clean up mixer
+        }
         SDL_DestroyTexture(app->bunny_texture);
         SDL_DestroyTexture(app->font_texture);
         SDL_DestroyRenderer(app->renderer);
