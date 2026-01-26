@@ -56,6 +56,9 @@ endif()
 if (APPLE OR EMSCRIPTEN)
   # Disable shared builds as we want a static binary
   set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+else()
+  # Enable shared builds for other platforms
+  set(BUILD_SHARED_LIBS ON CACHE INTERNAL "")
 endif()
 
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
@@ -123,6 +126,7 @@ CPMAddPackage("gh:libsdl-org/SDL_mixer#prerelease-3.1.2")
 
 # Add SDL_TTF
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
+set(SDL3TTF_HARFBUZZ OFF CACHE BOOL "" FORCE)
 CPMAddPackage("gh:libsdl-org/SDL_ttf#release-3.2.2")
 
 ####################################
@@ -161,7 +165,7 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE
 target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1)
 
 # Link dependencies
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf stdc++)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -DDEBUG")

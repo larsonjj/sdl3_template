@@ -15,7 +15,7 @@ struct AppContext
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *bunny_texture;
-    SDL_Texture *font_texture; // Texture used for the FPS text.
+    SDL_Texture *font_texture;
     MIX_Audio *music;
     float pixel_density;
     SDL_AppResult app_quit = SDL_APP_CONTINUE;
@@ -85,11 +85,12 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     spec.format = SDL_AUDIO_S16;
     spec.channels = 2;
 
-    if (!MIX_CreateMixerDevice(0, &spec)) {
+    MIX_Mixer *mixer = MIX_CreateMixerDevice(0, &spec);
+    if (!mixer) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         return SDL_Fail();
     } else {
-        MIX_GetMixerFormat(&spec.freq, &spec.format, &spec.channels);
+        MIX_GetMixerFormat(NULL, &spec);
         SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq,
                 (spec.format & 0xFF),
                 (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
@@ -106,11 +107,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     char combined_path[512];
     SDL_snprintf(combined_path, sizeof(combined_path), "%s%s", root_filepath, bg_music_asset_filepath);
 
-    music = MIX_LoadAudio(combined_path);
+    music = MIX_LoadAudio(mixer, combined_path, false);
     if (music == NULL) {
         SDL_Log("Couldn't load %s: %s\n", combined_path, SDL_GetError());
         return SDL_Fail();
     }
+
+    // Play the music with infinite loop
+    MIX_PlayAudio(mixer, music);
 
     // Optionally enable vsync (currently commented out)
     // SDL_SetRenderVSync(renderer, -1);
@@ -292,10 +296,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         rng,
         bunny_x_speeds,
         bunny_y_speeds,
-        font // Store the font pointer for later FPS updates.
+        font
     };
 
-    MIX_PlayAudio(MIX_GetDefaultPlaybackDevice(), music);
     return SDL_APP_CONTINUE;
 }
 
@@ -442,7 +445,9 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     if (appstate != NULL) {
         auto *app = static_cast<AppContext *>(appstate);
         if (app) {
-            MIX_DestroyAudio(app->music);
+            if (app->music) {
+                MIX_DestroyAudio(app->music);
+            }
             SDL_DestroyTexture(app->bunny_texture);
             SDL_DestroyTexture(app->font_texture);
             SDL_DestroyRenderer(app->renderer);
