@@ -267,12 +267,13 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
 
+    Uint32 currentTime = (Uint32)SDL_GetTicks();
+
     int rendererWidth;
     int rendererHeight;
     SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
 
     static Uint32 prevTime = 0;
-    Uint32 currentTime = SDL_GetTicks();
     float deltaTime = (prevTime == 0) ? 0 : (currentTime - prevTime) / 1000.0f;
     prevTime = currentTime;
 
@@ -318,8 +319,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     float txtW;
     float txtH;
     SDL_GetTextureSize(app->font_texture, &txtW, &txtH);
-    int margin = 16 * app->pixel_density;
-    SDL_FRect fps_dst = {margin, (float)(rendererHeight - txtH - margin), txtW, txtH};
+    float margin = (float)(16 * app->pixel_density);
+    float fpsY = (float)(rendererHeight - txtH - margin);
+    SDL_FRect fps_dst = {margin, fpsY, txtW, txtH};
     SDL_RenderTexture(app->renderer, app->font_texture, NULL, &fps_dst);
 
     // Render bunny count at top left.
