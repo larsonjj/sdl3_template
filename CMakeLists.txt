@@ -33,12 +33,6 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  # Build universal binaries on Apple Silicon MacOS
-  ## NOTE: This must be set before the project() call
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
-endif()
-
 # Define PROJECT_SOURCES as a list of all source files
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.c")
 
@@ -96,7 +90,7 @@ set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 CPMAddPackage(
   NAME SDL
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG release-3.4.0
+  GIT_TAG release-3.4.2
   EXCLUDE_FROM_ALL YES
 )
 
