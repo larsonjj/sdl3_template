@@ -20,6 +20,7 @@ typedef struct {
     MIX_Mixer *mixer; // Add mixer to app context
     float pixel_density;
     int app_quit;
+    int music_started;
     // Dynamic arrays for bunnies and speed values.
     SDL_FRect *bunnies;
     size_t bunny_count;
@@ -231,8 +232,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     app->bunny_y_speeds = bunny_y_speeds;
     app->font = font;
 
-    // Play the music with infinite loop
-    MIX_PlayAudio(mixer, music);
+    // Music playback is deferred to the first user interaction
+    // to satisfy browser autoplay policy when running in Emscripten.
+    app->music_started = 0;
     *appstate = app;
     return SDL_APP_CONTINUE;
 }
@@ -242,6 +244,14 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     AppContext *app = (AppContext *)appstate;
     if (event->type == SDL_EVENT_QUIT) {
         app->app_quit = 1;
+    }
+    // Start music on first user gesture to satisfy browser autoplay policy.
+    if (!app->music_started &&
+        (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
+         event->type == SDL_EVENT_KEY_DOWN ||
+         event->type == SDL_EVENT_FINGER_DOWN)) {
+        app->music_started = 1;
+        MIX_PlayAudio(app->mixer, app->music);
     }
     if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
         if (event->button.button == SDL_BUTTON_LEFT) {
