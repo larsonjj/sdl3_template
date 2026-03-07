@@ -97,6 +97,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!renderer) {
         return SDL_AppFail();
     }
+    SDL_SetRenderVSync(renderer, 1); // use requestAnimationFrame on Emscripten
     float pixel_density = SDL_GetWindowPixelDensity(window);
 
 #ifndef __ANDROID__
@@ -247,8 +248,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     }
     // Start music on first user gesture to satisfy browser autoplay policy.
     if (!app->music_started &&
-        (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
-         event->type == SDL_EVENT_KEY_DOWN ||
+        (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN || event->type == SDL_EVENT_KEY_DOWN ||
          event->type == SDL_EVENT_FINGER_DOWN)) {
         app->music_started = 1;
         MIX_PlayAudio(app->mixer, app->music);
