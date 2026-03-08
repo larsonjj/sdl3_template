@@ -28,9 +28,14 @@ typedef struct {
     float *bunny_x_speeds;
     float *bunny_y_speeds;
     TTF_Font *font;
+    Uint32 prevTime;
+    Uint32 lastTime;
+    Uint32 lastBunnyUpdate;
+    int frameCount;
+    SDL_Texture *bunnyCountTexture;
 } AppContext;
 
-static int SDL_AppFail(void)
+static SDL_AppResult SDL_AppFail(void)
 {
     SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Error %s", SDL_GetError());
     return SDL_APP_FAILURE;
@@ -97,7 +102,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!renderer) {
         return SDL_AppFail();
     }
+#ifdef __EMSCRIPTEN__
     SDL_SetRenderVSync(renderer, 1); // use requestAnimationFrame on Emscripten
+#endif
     float pixel_density = SDL_GetWindowPixelDensity(window);
 
 #ifndef __ANDROID__
@@ -195,24 +202,19 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     float *bunny_y_speeds = malloc(bunny_capacity * sizeof(float));
     if (!bunnies || !bunny_x_speeds || !bunny_y_speeds) {
         SDL_Log("Couldn't allocate bunny arrays");
+        free(bunnies);
+        free(bunny_x_speeds);
+        free(bunny_y_speeds);
         return SDL_AppFail();
     }
-    size_t bunny_count = 0;
     srand((unsigned int)time(NULL));
-    {
-        SDL_FRect r;
-        r.x = random_float(0.0f, 352.0f);
-        r.y = random_float(0.0f, 430.0f);
-        r.w = 26 * pixel_density;
-        r.h = 37 * pixel_density;
-        BunnyArrayPush(&(AppContext){.bunnies = bunnies,
-                                     .bunny_count = bunny_count,
-                                     .bunny_capacity = bunny_capacity,
-                                     .bunny_x_speeds = bunny_x_speeds,
-                                     .bunny_y_speeds = bunny_y_speeds},
-                       r, random_float(-50.0f, 50.0f), random_float(-50.0f, 50.0f));
-        bunny_count++; // Set initial count.
-    }
+    bunnies[0].x = random_float(0.0f, 352.0f);
+    bunnies[0].y = random_float(0.0f, 430.0f);
+    bunnies[0].w = 26 * pixel_density;
+    bunnies[0].h = 37 * pixel_density;
+    bunny_x_speeds[0] = random_float(-50.0f, 50.0f);
+    bunny_y_speeds[0] = random_float(-50.0f, 50.0f);
+    size_t bunny_count = 1;
 
     AppContext *app = malloc(sizeof(AppContext));
     if (!app) {
@@ -232,6 +234,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     app->bunny_x_speeds = bunny_x_speeds;
     app->bunny_y_speeds = bunny_y_speeds;
     app->font = font;
+    app->prevTime = 0;
+    app->lastTime = 0;
+    app->lastBunnyUpdate = 0;
+    app->frameCount = 0;
+    app->bunnyCountTexture = NULL;
 
     // Music playback is deferred to the first user interaction
     // to satisfy browser autoplay policy when running in Emscripten.
@@ -283,18 +290,27 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     int rendererHeight;
     SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
 
-    static Uint32 prevTime = 0;
-    float deltaTime = (prevTime == 0) ? 0 : (currentTime - prevTime) / 1000.0f;
-    prevTime = currentTime;
+    float deltaTime = (app->prevTime == 0) ? 0 : (currentTime - app->prevTime) / 1000.0f;
+    app->prevTime = currentTime;
 
     // Update bunny positions.
     for (size_t i = 0; i < app->bunny_count; i++) {
         app->bunnies[i].x += app->bunny_x_speeds[i] * deltaTime;
         app->bunnies[i].y += app->bunny_y_speeds[i] * deltaTime;
-        if (app->bunnies[i].x < 0 || app->bunnies[i].x + app->bunnies[i].w > rendererWidth)
-            app->bunny_x_speeds[i] *= -1;
-        if (app->bunnies[i].y < 0 || app->bunnies[i].y + app->bunnies[i].h > rendererHeight)
-            app->bunny_y_speeds[i] *= -1;
+        if (app->bunnies[i].x < 0) {
+            app->bunnies[i].x = 0;
+            app->bunny_x_speeds[i] = SDL_fabsf(app->bunny_x_speeds[i]);
+        } else if (app->bunnies[i].x + app->bunnies[i].w > (float)rendererWidth) {
+            app->bunnies[i].x = (float)rendererWidth - app->bunnies[i].w;
+            app->bunny_x_speeds[i] = -SDL_fabsf(app->bunny_x_speeds[i]);
+        }
+        if (app->bunnies[i].y < 0) {
+            app->bunnies[i].y = 0;
+            app->bunny_y_speeds[i] = SDL_fabsf(app->bunny_y_speeds[i]);
+        } else if (app->bunnies[i].y + app->bunnies[i].h > (float)rendererHeight) {
+            app->bunnies[i].y = (float)rendererHeight - app->bunnies[i].h;
+            app->bunny_y_speeds[i] = -SDL_fabsf(app->bunny_y_speeds[i]);
+        }
     }
 
     SDL_FRect bunny_srcrect = {0, 0, 26, 37};
@@ -302,15 +318,12 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         SDL_RenderTexture(app->renderer, app->bunny_texture, &bunny_srcrect, &app->bunnies[i]);
     }
 
-    // Update FPS texture every second (similar to your current FPS text update).
-    static Uint32 lastTime = 0;
-    static Uint32 lastBunnyUpdate = 0;
-    static int frameCount = 0;
-    frameCount++;
-    if (currentTime - lastTime >= 1000) {
-        int fps = frameCount;
-        frameCount = 0;
-        lastTime = currentTime;
+    // Update FPS texture every second.
+    app->frameCount++;
+    if (currentTime - app->lastTime >= 1000) {
+        int fps = app->frameCount;
+        app->frameCount = 0;
+        app->lastTime = currentTime;
         char fpsText[32];
         SDL_snprintf(fpsText, sizeof(fpsText), "FPS: %d", fps);
         SDL_Color fpsColor = {0, 0, 0, 255};
@@ -335,9 +348,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     SDL_RenderTexture(app->renderer, app->font_texture, NULL, &fps_dst);
 
     // Render bunny count at top left.
-    static SDL_Texture *bunnyCountTexture = NULL;
-    if (currentTime - lastBunnyUpdate >= 1000) {
-        lastBunnyUpdate = currentTime;
+    if (currentTime - app->lastBunnyUpdate >= 1000) {
+        app->lastBunnyUpdate = currentTime;
         char bunnyText[32];
         SDL_snprintf(bunnyText, sizeof(bunnyText), "Bunnies: %d", (int)app->bunny_count);
         SDL_Color black = {0, 0, 0, 255};
@@ -347,19 +359,19 @@ SDL_AppResult SDL_AppIterate(void *appstate)
             SDL_Texture *newTexture = SDL_CreateTextureFromSurface(app->renderer, bunnySurface);
             SDL_DestroySurface(bunnySurface);
             if (newTexture) {
-                if (bunnyCountTexture) {
-                    SDL_DestroyTexture(bunnyCountTexture);
+                if (app->bunnyCountTexture) {
+                    SDL_DestroyTexture(app->bunnyCountTexture);
                 }
-                bunnyCountTexture = newTexture;
+                app->bunnyCountTexture = newTexture;
             }
         }
     }
-    if (bunnyCountTexture) {
+    if (app->bunnyCountTexture) {
         float txtW2;
         float txtH2;
-        SDL_GetTextureSize(bunnyCountTexture, &txtW2, &txtH2);
+        SDL_GetTextureSize(app->bunnyCountTexture, &txtW2, &txtH2);
         SDL_FRect bunny_dst = {margin, margin, txtW2, txtH2};
-        SDL_RenderTexture(app->renderer, bunnyCountTexture, NULL, &bunny_dst);
+        SDL_RenderTexture(app->renderer, app->bunnyCountTexture, NULL, &bunny_dst);
     }
 
     SDL_RenderPresent(app->renderer);
@@ -376,6 +388,9 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
         }
         if (app->mixer) {
             MIX_DestroyMixer(app->mixer); // Clean up mixer
+        }
+        if (app->bunnyCountTexture) {
+            SDL_DestroyTexture(app->bunnyCountTexture);
         }
         SDL_DestroyTexture(app->bunny_texture);
         SDL_DestroyTexture(app->font_texture);
