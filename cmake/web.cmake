@@ -17,8 +17,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_link_options(${EXECUTABLE_NAME} PRIVATE
     -sASSERTIONS=1
     -gsource-map
-    -sINITIAL_MEMORY=67108864
-    -O0
+    -sINITIAL_MEMORY=134217728
     -Wall
     --preload-file assets/
     --shell-file ../../src/minshell.html
@@ -27,8 +26,7 @@ else()
   target_compile_options(${EXECUTABLE_NAME} PRIVATE -Oz -flto)
   target_link_options(${EXECUTABLE_NAME} PRIVATE
     -sASSERTIONS=0
-    -sINITIAL_MEMORY=67108864
-    -Oz
+    -sINITIAL_MEMORY=134217728
     -flto
     --closure 1
     -Wall
