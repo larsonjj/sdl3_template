@@ -10,8 +10,17 @@ add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
 )
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Os")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -gsource-map -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=1gb -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
+
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=1 -gsource-map INITIAL_MEMORY=67108864 -Os -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
+else()
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Oz -flto")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -flto")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASSERTIONS=0 -s INITIAL_MEMORY=67108864 -Oz -flto --closure 1 -Wall --preload-file assets/ --shell-file ../../src/minshell.html")
+endif()
+
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
 
 # Store source assets path
