@@ -18,13 +18,77 @@
         body {
             margin: 0px;
             text-align: center;
+            background-color: black;
         }
         canvas.emscripten { border: 0px none; background-color: black; }
+
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: black;
+            color: white;
+            font-family: monospace;
+            font-size: 16px;
+            z-index: 10;
+        }
+        #loading-overlay.hidden { display: none; }
+
+        #progress-bar-container {
+            width: 300px;
+            height: 16px;
+            background: #333;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #4af;
+            border-radius: 8px;
+            transition: width 0.1s ease;
+        }
+        #progress-label {
+            margin-top: 8px;
+            color: #aaa;
+            font-size: 13px;
+        }
     </style>
-    </script>
     </head>
     <body>
+        <div id="loading-overlay">
+            <div>Loading...</div>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="progress-label">0%</div>
+        </div>
         <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+        <script>
+            var Module = {
+                onRuntimeInitialized: function() {
+                    var overlay = document.getElementById('loading-overlay');
+                    if (overlay) overlay.classList.add('hidden');
+                },
+                setStatus: function(text) {
+                    var match = text.match(/(\d+(\.\d+)?)\/(\d+)/);
+                    if (match) {
+                        var loaded = parseInt(match[1]);
+                        var total  = parseInt(match[3]);
+                        var pct    = total > 0 ? Math.round((loaded / total) * 100) : 0;
+                        document.getElementById('progress-bar').style.width = pct + '%';
+                        document.getElementById('progress-label').textContent = pct + '%';
+                    } else if (text === '') {
+                        var overlay = document.getElementById('loading-overlay');
+                        if (overlay) overlay.classList.add('hidden');
+                    }
+                }
+            };
+        </script>
         {{{ SCRIPT }}}
     </body>
 </html>
