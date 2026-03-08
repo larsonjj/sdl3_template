@@ -58,6 +58,10 @@ endif()
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 message(STATUS "CMAKE_OBJC_FLAGS: " ${CMAKE_OBJC_FLAGS})
 
+# Window dimensions (single source of truth — passed to C and to web pre.js)
+set(WINDOW_WIDTH 352)
+set(WINDOW_HEIGHT 430)
+
 # Author Information for bundling
 set(AUTHOR_NAME "John Doe")
 set(AUTHOR_EMAIL "john.doe@example.com")
@@ -181,7 +185,10 @@ target_compile_options(${EXECUTABLE_NAME} PRIVATE
 )
 
 # Ensure we use SDL3 main callbacks. (Must be done after linking dependencies)
-target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1)
+target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1
+    WINDOW_WIDTH=${WINDOW_WIDTH}
+    WINDOW_HEIGHT=${WINDOW_HEIGHT}
+)
 
 # Link dependencies
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)

@@ -1,0 +1,9 @@
+// Set the canvas to the game's logical dimensions before Emscripten initializes.
+// Values are injected by CMake configure_file from WINDOW_WIDTH / WINDOW_HEIGHT.
+(function() {
+    var canvas = document.getElementById('canvas');
+    if (canvas) {
+        canvas.style.width  = '@WINDOW_WIDTH@px';
+        canvas.style.height = '@WINDOW_HEIGHT@px';
+    }
+})();

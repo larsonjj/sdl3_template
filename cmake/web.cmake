@@ -10,7 +10,13 @@ add_custom_command(TARGET ${EXECUTABLE_NAME} PRE_BUILD
 )
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
-set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+    SUFFIX ".html"
+    LINK_DEPENDS "${CMAKE_SOURCE_DIR}/src/minshell.html"
+)
+
+# Generate a pre.js that sets the canvas size before Emscripten runs.
+configure_file(${CMAKE_SOURCE_DIR}/src/pre.js.in ${CMAKE_BINARY_DIR}/pre.js @ONLY)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(${EXECUTABLE_NAME} PRIVATE -O0)
@@ -20,6 +26,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     -sINITIAL_MEMORY=134217728
     -Wall
     --preload-file assets/
+    --pre-js ${CMAKE_BINARY_DIR}/pre.js
     --shell-file ../../src/minshell.html
   )
 else()
@@ -29,8 +36,10 @@ else()
     -sINITIAL_MEMORY=134217728
     -flto
     --closure 1
+    "SHELL:--closure-args \"--jscomp_off=uselessCode --jscomp_off=checkTypes\""
     -Wall
     --preload-file assets/
+    --pre-js ${CMAKE_BINARY_DIR}/pre.js
     --shell-file ../../src/minshell.html
   )
 endif()
