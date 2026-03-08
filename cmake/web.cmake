@@ -15,9 +15,9 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(${EXECUTABLE_NAME} PRIVATE -O0)
   target_link_options(${EXECUTABLE_NAME} PRIVATE
-    -s ASSERTIONS=1
+    -sASSERTIONS=1
     -gsource-map
-    -s INITIAL_MEMORY=67108864
+    -sINITIAL_MEMORY=67108864
     -O0
     -Wall
     --preload-file assets/
@@ -26,8 +26,8 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
 else()
   target_compile_options(${EXECUTABLE_NAME} PRIVATE -Oz -flto)
   target_link_options(${EXECUTABLE_NAME} PRIVATE
-    -s ASSERTIONS=0
-    -s INITIAL_MEMORY=67108864
+    -sASSERTIONS=0
+    -sINITIAL_MEMORY=67108864
     -Oz
     -flto
     --closure 1
