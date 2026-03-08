@@ -8,6 +8,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+
+static void emscripten_log_output(void *userdata, int category, SDL_LogPriority priority,
+                                  const char *message)
+{
+    (void)userdata;
+    (void)category;
+    if (priority >= SDL_LOG_PRIORITY_ERROR) {
+        EM_ASM({ console.error(UTF8ToString($0)); }, message);
+    } else if (priority >= SDL_LOG_PRIORITY_WARN) {
+        EM_ASM({ console.warn(UTF8ToString($0)); }, message);
+    } else {
+        EM_ASM({ console.info(UTF8ToString($0)); }, message);
+    }
+}
+#endif
 
 #define MAX_BUNNIES 100000
 
@@ -67,6 +84,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
+#ifdef __EMSCRIPTEN__
+    SDL_SetLogOutputFunction(emscripten_log_output, NULL);
+#endif
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
         return SDL_AppFail();
     }
