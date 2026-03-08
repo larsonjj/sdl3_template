@@ -11,11 +11,11 @@ install(
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # Default: include
   )
 
-set(APP "\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/${EXECUTABLE_NAME}")
-
-# Directories to look for dependencies
-set(DIRS ${CMAKE_BINARY_DIR})
-message( STATUS "DIRS: ${DIRS}")
+# Use $ORIGIN RPATH so the binary finds shared libs relative to itself at install
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+  INSTALL_RPATH "$ORIGIN"
+  BUILD_WITH_INSTALL_RPATH TRUE
+)
 
 install(
   FILES
@@ -28,20 +28,7 @@ install(
       ${PROJECT_SOURCE_DIR}/assets
   DESTINATION .)
 
-install(CODE "include(InstallRequiredSystemLibraries)
-  include(BundleUtilities)
-  fixup_bundle(\"${APP}\" \"\" \"${DIRS}\")")
-
 set(CPACK_GENERATOR "TGZ")
 include(CPack)
 
-# Store source assets path
-set(SRC_ASSETS_PATH "${CMAKE_SOURCE_DIR}/assets")
-
-if (CMAKE_BUILD_TYPE MATCHES "Debug")
-  # Set the asset path macro to the absolute path on the dev machine and ensure SDL uses callbacks for main
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH=\"${SRC_ASSETS_PATH}\")
-else()
-  # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable and ensure SDL uses callbacks for main
-  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC ASSETS_PATH="./assets/")
-endif()
+set(RELEASE_ASSETS_PATH "./assets/")

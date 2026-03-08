@@ -186,6 +186,13 @@ target_compile_definitions(${EXECUTABLE_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS=1)
 # Link dependencies
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf)
 
+# ASSETS_PATH compile definition — RELEASE_ASSETS_PATH is set per platform in cmake/*.cmake
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC "ASSETS_PATH=\"${CMAKE_SOURCE_DIR}/assets\"")
+else()
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC "ASSETS_PATH=\"${RELEASE_ASSETS_PATH}\"")
+endif()
+
 # Use only C flags for Debug builds
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG")
