@@ -25,11 +25,16 @@ typedef struct {
     SDL_FRect bunnies[MAX_BUNNIES];
     float bunny_x_speeds[MAX_BUNNIES];
     float bunny_y_speeds[MAX_BUNNIES];
+    float bunny_xy[MAX_BUNNIES * 4 * 2];   // XY vertices, rebuilt each frame
+    float bunny_uv[MAX_BUNNIES * 4 * 2];   // UV coords, set once at init
+    Uint32 bunny_indices[MAX_BUNNIES * 6]; // index buffer, set once at init
     size_t bunny_count;
     TTF_Font *font;
-    Uint32 prevTime;
-    Uint32 lastTime;
-    Uint32 lastBunnyUpdate;
+    int rendererWidth;
+    int rendererHeight;
+    Uint64 prevTime;
+    Uint64 lastTime;
+    Uint64 lastBunnyUpdate;
     int frameCount;
     SDL_Texture *bunnyCountTexture;
 } AppContext;
@@ -201,6 +206,31 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     app->lastBunnyUpdate = 0;
     app->frameCount = 0;
     app->bunnyCountTexture = NULL;
+    SDL_GetCurrentRenderOutputSize(renderer, &app->rendererWidth, &app->rendererHeight);
+
+    // Initialize UV coordinates once (same full-texture quad for every bunny).
+    for (int i = 0; i < MAX_BUNNIES; i++) {
+        int base = i * 8;
+        app->bunny_uv[base + 0] = 0.0f;
+        app->bunny_uv[base + 1] = 0.0f;
+        app->bunny_uv[base + 2] = 1.0f;
+        app->bunny_uv[base + 3] = 0.0f;
+        app->bunny_uv[base + 4] = 1.0f;
+        app->bunny_uv[base + 5] = 1.0f;
+        app->bunny_uv[base + 6] = 0.0f;
+        app->bunny_uv[base + 7] = 1.0f;
+    }
+    // Initialize index buffer once (two triangles per quad).
+    for (int i = 0; i < MAX_BUNNIES; i++) {
+        Uint32 v = (Uint32)(i * 4);
+        int base = i * 6;
+        app->bunny_indices[base + 0] = v;
+        app->bunny_indices[base + 1] = v + 1;
+        app->bunny_indices[base + 2] = v + 2;
+        app->bunny_indices[base + 3] = v;
+        app->bunny_indices[base + 4] = v + 2;
+        app->bunny_indices[base + 5] = v + 3;
+    }
 
 #ifdef __EMSCRIPTEN__
     // On web, music must wait for a user gesture due to browser autoplay policy.
@@ -218,6 +248,9 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     AppContext *app = (AppContext *)appstate;
     if (event->type == SDL_EVENT_QUIT) {
         app->app_quit = 1;
+    }
+    if (event->type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED) {
+        SDL_GetCurrentRenderOutputSize(app->renderer, &app->rendererWidth, &app->rendererHeight);
     }
 #ifdef __EMSCRIPTEN__
     // Start music on first user gesture to satisfy browser autoplay policy.
@@ -252,39 +285,53 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
 
-    Uint32 currentTime = (Uint32)SDL_GetTicks();
+    Uint64 currentTime = SDL_GetTicks();
 
-    int rendererWidth;
-    int rendererHeight;
-    SDL_GetCurrentRenderOutputSize(app->renderer, &rendererWidth, &rendererHeight);
+    float rW = (float)app->rendererWidth;
+    float rH = (float)app->rendererHeight;
 
-    float deltaTime = (app->prevTime == 0) ? 0 : (currentTime - app->prevTime) / 1000.0f;
+    float deltaTime = (app->prevTime == 0) ? 0.0f : (float)(currentTime - app->prevTime) / 1000.0f;
+    if (deltaTime > 0.05f)
+        deltaTime = 0.05f;
     app->prevTime = currentTime;
 
-    // Update bunny positions.
+    // Update bunny positions and rebuild XY vertex data in one pass.
     for (size_t i = 0; i < app->bunny_count; i++) {
         app->bunnies[i].x += app->bunny_x_speeds[i] * deltaTime;
         app->bunnies[i].y += app->bunny_y_speeds[i] * deltaTime;
         if (app->bunnies[i].x < 0) {
             app->bunnies[i].x = 0;
             app->bunny_x_speeds[i] = SDL_fabsf(app->bunny_x_speeds[i]);
-        } else if (app->bunnies[i].x + app->bunnies[i].w > (float)rendererWidth) {
-            app->bunnies[i].x = (float)rendererWidth - app->bunnies[i].w;
+        } else if (app->bunnies[i].x + app->bunnies[i].w > rW) {
+            app->bunnies[i].x = rW - app->bunnies[i].w;
             app->bunny_x_speeds[i] = -SDL_fabsf(app->bunny_x_speeds[i]);
         }
         if (app->bunnies[i].y < 0) {
             app->bunnies[i].y = 0;
             app->bunny_y_speeds[i] = SDL_fabsf(app->bunny_y_speeds[i]);
-        } else if (app->bunnies[i].y + app->bunnies[i].h > (float)rendererHeight) {
-            app->bunnies[i].y = (float)rendererHeight - app->bunnies[i].h;
+        } else if (app->bunnies[i].y + app->bunnies[i].h > rH) {
+            app->bunnies[i].y = rH - app->bunnies[i].h;
             app->bunny_y_speeds[i] = -SDL_fabsf(app->bunny_y_speeds[i]);
         }
+        float x = app->bunnies[i].x, y = app->bunnies[i].y;
+        float w = app->bunnies[i].w, h = app->bunnies[i].h;
+        int base = (int)i * 8;
+        app->bunny_xy[base + 0] = x;
+        app->bunny_xy[base + 1] = y;
+        app->bunny_xy[base + 2] = x + w;
+        app->bunny_xy[base + 3] = y;
+        app->bunny_xy[base + 4] = x + w;
+        app->bunny_xy[base + 5] = y + h;
+        app->bunny_xy[base + 6] = x;
+        app->bunny_xy[base + 7] = y + h;
     }
 
-    SDL_FRect bunny_srcrect = {0, 0, 26, 37};
-    for (size_t i = 0; i < app->bunny_count; i++) {
-        SDL_RenderTexture(app->renderer, app->bunny_texture, &bunny_srcrect, &app->bunnies[i]);
-    }
+    // Draw all bunnies in a single geometry call instead of N individual calls.
+    static const SDL_FColor white = {1.0f, 1.0f, 1.0f, 1.0f};
+    SDL_RenderGeometryRaw(app->renderer, app->bunny_texture, app->bunny_xy,
+                          (int)(sizeof(float) * 2), &white, 0, app->bunny_uv,
+                          (int)(sizeof(float) * 2), (int)(app->bunny_count * 4), app->bunny_indices,
+                          (int)(app->bunny_count * 6), 4);
 
     // Update FPS texture every second.
     app->frameCount++;
@@ -311,7 +358,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     float txtH;
     SDL_GetTextureSize(app->font_texture, &txtW, &txtH);
     float margin = (float)(16 * app->pixel_density);
-    float fpsY = (float)(rendererHeight - txtH - margin);
+    float fpsY = (float)(rH - txtH - margin);
     SDL_FRect fps_dst = {margin, fpsY, txtW, txtH};
     SDL_RenderTexture(app->renderer, app->font_texture, NULL, &fps_dst);
 
