@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define INITIAL_BUNNY_CAPACITY 64
+#define MAX_BUNNIES 100000
 
 typedef struct {
     SDL_Window *window;
@@ -21,12 +21,11 @@ typedef struct {
     float pixel_density;
     int app_quit;
     int music_started;
-    // Dynamic arrays for bunnies and speed values.
-    SDL_FRect *bunnies;
+    // Fixed-size bunny arrays.
+    SDL_FRect bunnies[MAX_BUNNIES];
+    float bunny_x_speeds[MAX_BUNNIES];
+    float bunny_y_speeds[MAX_BUNNIES];
     size_t bunny_count;
-    size_t bunny_capacity;
-    float *bunny_x_speeds;
-    float *bunny_y_speeds;
     TTF_Font *font;
     Uint32 prevTime;
     Uint32 lastTime;
@@ -43,29 +42,9 @@ static SDL_AppResult SDL_AppFail(void)
 
 static void BunnyArrayPush(AppContext *app, SDL_FRect rect, float x_speed, float y_speed)
 {
-    if (app->bunny_count >= app->bunny_capacity) {
-        app->bunny_capacity *= 2;
-
-        SDL_FRect *tmpBunnies = realloc(app->bunnies, app->bunny_capacity * sizeof(SDL_FRect));
-        if (!tmpBunnies) {
-            SDL_Log("Memory reallocation failed for bunnies");
-            return;
-        }
-        app->bunnies = tmpBunnies;
-
-        float *tmpBunnyX = realloc(app->bunny_x_speeds, app->bunny_capacity * sizeof(float));
-        if (!tmpBunnyX) {
-            SDL_Log("Memory reallocation failed for bunny_x_speeds");
-            return;
-        }
-        app->bunny_x_speeds = tmpBunnyX;
-
-        float *tmpBunnyY = realloc(app->bunny_y_speeds, app->bunny_capacity * sizeof(float));
-        if (!tmpBunnyY) {
-            SDL_Log("Memory reallocation failed for bunny_y_speeds");
-            return;
-        }
-        app->bunny_y_speeds = tmpBunnyY;
+    if (app->bunny_count >= MAX_BUNNIES) {
+        SDL_Log("Max bunny count (%d) reached", MAX_BUNNIES);
+        return;
     }
     app->bunnies[app->bunny_count] = rect;
     app->bunny_x_speeds[app->bunny_count] = x_speed;
@@ -195,26 +174,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_DestroySurface(text);
     SDL_SetTextureScaleMode(font_texture, SDL_SCALEMODE_NEAREST);
 
-    // Initialize bunny dynamic arrays.
-    size_t bunny_capacity = INITIAL_BUNNY_CAPACITY;
-    SDL_FRect *bunnies = malloc(bunny_capacity * sizeof(SDL_FRect));
-    float *bunny_x_speeds = malloc(bunny_capacity * sizeof(float));
-    float *bunny_y_speeds = malloc(bunny_capacity * sizeof(float));
-    if (!bunnies || !bunny_x_speeds || !bunny_y_speeds) {
-        SDL_Log("Couldn't allocate bunny arrays");
-        free(bunnies);
-        free(bunny_x_speeds);
-        free(bunny_y_speeds);
-        return SDL_AppFail();
-    }
     srand((unsigned int)time(NULL));
-    bunnies[0].x = random_float(0.0f, 352.0f);
-    bunnies[0].y = random_float(0.0f, 430.0f);
-    bunnies[0].w = 26 * pixel_density;
-    bunnies[0].h = 37 * pixel_density;
-    bunny_x_speeds[0] = random_float(-50.0f, 50.0f);
-    bunny_y_speeds[0] = random_float(-50.0f, 50.0f);
-    size_t bunny_count = 1;
 
     AppContext *app = malloc(sizeof(AppContext));
     if (!app) {
@@ -228,11 +188,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     app->mixer = mixer; // Store mixer in app context
     app->pixel_density = pixel_density;
     app->app_quit = 0;
-    app->bunnies = bunnies;
-    app->bunny_count = bunny_count;
-    app->bunny_capacity = bunny_capacity;
-    app->bunny_x_speeds = bunny_x_speeds;
-    app->bunny_y_speeds = bunny_y_speeds;
+    app->bunny_count = 0;
+    float bunnyW = 26 * pixel_density;
+    float bunnyH = 37 * pixel_density;
+    for (int i = 0; i < 1000; i++) {
+        SDL_FRect r = {random_float(0.0f, 352.0f), random_float(0.0f, 430.0f), bunnyW, bunnyH};
+        BunnyArrayPush(app, r, random_float(-50.0f, 50.0f), random_float(-50.0f, 50.0f));
+    }
     app->font = font;
     app->prevTime = 0;
     app->lastTime = 0;
@@ -240,9 +202,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     app->frameCount = 0;
     app->bunnyCountTexture = NULL;
 
-    // Music playback is deferred to the first user interaction
-    // to satisfy browser autoplay policy when running in Emscripten.
+#ifdef __EMSCRIPTEN__
+    // On web, music must wait for a user gesture due to browser autoplay policy.
     app->music_started = 0;
+#else
+    MIX_PlayAudio(app->mixer, app->music);
+    app->music_started = 1;
+#endif
     *appstate = app;
     return SDL_APP_CONTINUE;
 }
@@ -253,6 +219,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     if (event->type == SDL_EVENT_QUIT) {
         app->app_quit = 1;
     }
+#ifdef __EMSCRIPTEN__
     // Start music on first user gesture to satisfy browser autoplay policy.
     if (!app->music_started &&
         (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN || event->type == SDL_EVENT_KEY_DOWN ||
@@ -260,6 +227,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         app->music_started = 1;
         MIX_PlayAudio(app->mixer, app->music);
     }
+#endif
     if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
         if (event->button.button == SDL_BUTTON_LEFT) {
             float bunnyW = 26 * app->pixel_density;
@@ -397,9 +365,6 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
         SDL_DestroyRenderer(app->renderer);
         SDL_DestroyWindow(app->window);
         TTF_CloseFont(app->font);
-        free(app->bunnies);
-        free(app->bunny_x_speeds);
-        free(app->bunny_y_speeds);
         free(app);
     }
     TTF_Quit();
