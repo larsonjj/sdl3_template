@@ -56,7 +56,7 @@ Produces a `.dmg` installer in `build/mac/`.
 config\config-win.bat
 ```
 
-### Web (Emscripten)
+### Web (Emscripten) — macOS / Linux
 
 Requires the Emscripten SDK to be installed and activated (`emsdk_env.sh`).
 
@@ -64,11 +64,33 @@ Requires the Emscripten SDK to be installed and activated (`emsdk_env.sh`).
 ./config/config-web-unix.sh
 ```
 
+### Web (Emscripten) — Windows
+
+Requires the Emscripten SDK to be installed and activated (`emsdk_env.bat`).
+
+```bat
+config\config-web-win.bat
+```
+
 Output is placed in `build/web/`. Serve it with any static file server, e.g.:
 
 ```bash
 emrun build/web/sdl3_template.html
 ```
+
+### Web — Build, Serve & Open
+
+One-step scripts that build, start a local server, and open the game in your default browser:
+
+```bash
+# macOS / Linux
+./config/open-web.sh
+
+# Windows
+config\open-web.bat
+```
+
+Requires `emrun` (included with Emscripten) or `python` / `python3` on your PATH.
 
 ### iOS (device)
 
@@ -84,10 +106,16 @@ emrun build/web/sdl3_template.html
 
 Open the generated Xcode project in `build/ios/` to run on the simulator.
 
-### Android
+### Android — macOS / Linux
 
 ```bash
 ./build_android.sh
+```
+
+### Android — Windows
+
+```bat
+build_android.bat
 ```
 
 The debug APK is output to `build/android/_deps/sdl-src/android-project/app/build/outputs/apk/debug/`.
@@ -103,6 +131,17 @@ set(AUTHOR_WEBSITE "https://yoursite.com")
 set(AUTHOR_BUNDLE_ID "com.yourcompany.${EXECUTABLE_NAME}")
 set(APP_DESCRIPTION  "My awesome game")
 ```
+
+### Window Size
+
+The default window dimensions are defined in `src/main.c`:
+
+```c
+#define WINDOW_WIDTH 352
+#define WINDOW_HEIGHT 430
+```
+
+Change these values to set the initial window size on all platforms.
 
 ## Assets
 
