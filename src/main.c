@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#define WINDOW_WIDTH 352
+#define WINDOW_HEIGHT 430
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 
@@ -97,8 +100,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_APP_FAILURE;
     }
 
-    SDL_Window *window =
-        SDL_CreateWindow("Window", WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    SDL_Window *window = SDL_CreateWindow("Window", WINDOW_WIDTH, WINDOW_HEIGHT,
+                                          SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     if (!window) {
         return SDL_AppFail();
     }
